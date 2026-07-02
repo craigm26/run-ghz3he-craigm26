@@ -1,0 +1,344 @@
+#!/usr/bin/env python3
+"""
+test_judge.py — regression suite for the quantum bench judge.
+
+Mirrors fieldops-harness/bench/rcan-proof's expect-pass / expect-fail discipline:
+the committed worked examples must ACCEPT, and every class of forgery must be
+REJECTED with the right exit code. If this suite is green, the bench is sound:
+no fabricated result, constraint violation, or overfit claim can score.
+
+Run:  python3 test_judge.py   (exit 0 = all pass)
+"""
+
+import copy
+import json
+import os
+import shutil
+import subprocess
+import sys
+import tempfile
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+JUDGE = os.path.join(HERE, "judge_verify.py")
+
+sys.path.insert(0, HERE)
+import judge_verify  # noqa: E402
+import density_matrix as dm  # noqa: E402
+import numpy as np  # noqa: E402
+
+PASS = "\033[32m[PASS]\033[0m"
+FAIL = "\033[31m[FAIL]\033[0m"
+results = []
+
+
+def record(name, ok, detail=""):
+    results.append((name, ok, detail))
+    mark = PASS if ok else FAIL
+    print(f"  {mark} {name}" + (f"  — {detail}" if detail and not ok else ""))
+
+
+def run_cli(bundle_path):
+    """End-to-end: invoke judge_verify.py as a subprocess, return exit code."""
+    p = subprocess.run([sys.executable, JUDGE, bundle_path, "--json"],
+                       capture_output=True, text=True)
+    return p.returncode, p.stdout.strip()
+
+
+def verify_code(bundle):
+    """In-process verify(); return exit code (0 on accept)."""
+    try:
+        judge_verify.verify(bundle)
+        return 0
+    except judge_verify.Reject as r:
+        return r.code
+
+
+def load(name):
+    with open(os.path.join(HERE, name)) as f:
+        return json.load(f)
+
+
+def main():
+    print("quantum-judge regression suite")
+
+    # 1. Worked examples ACCEPT end-to-end (exit 0).
+    for fixture in ("quantum-proof-poc.json", "quantum-proof-vqe.json"):
+        code, out = run_cli(os.path.join(HERE, fixture))
+        record(f"{fixture} ACCEPTs (exit 0)", code == 0, f"exit {code}: {out}")
+
+    # 2. The committed FORGED bundle is REJECTED for fabricated results (exit 4).
+    code, out = run_cli(os.path.join(HERE, "quantum-proof-FORGED.json"))
+    record("quantum-proof-FORGED.json REJECTed as reproducibility fraud (exit 4)",
+           code == judge_verify.EXIT_REPRODUCIBILITY, f"exit {code}: {out}")
+
+    poc = load("quantum-proof-poc.json")
+
+    # 3. Tampered claim on an otherwise-valid circuit -> reproducibility reject.
+    b = copy.deepcopy(poc); b["claim"]["fidelity"] = 0.95
+    record("overclaimed fidelity REJECTed (exit 4)",
+           verify_code(b) == judge_verify.EXIT_REPRODUCIBILITY)
+
+    # 4. 2q gate off the coupling map -> structure reject.
+    b = copy.deepcopy(poc)
+    b["circuit"]["ops"] = [{"gate": "h", "q": [0]}, {"gate": "cx", "q": [0, 2]}]
+    record("2q gate off coupling map REJECTed (exit 3)",
+           verify_code(b) == judge_verify.EXIT_STRUCTURE)
+
+    # 5. Non-native gate -> structure reject.
+    b = copy.deepcopy(poc)
+    b["circuit"]["ops"].append({"gate": "t", "q": [0]})
+    record("non-native gate REJECTed (exit 3)",
+           verify_code(b) == judge_verify.EXIT_STRUCTURE)
+
+    # 6. Depth over budget -> structure reject.
+    b = copy.deepcopy(poc); b["constraints"]["max_depth"] = 2
+    record("depth over budget REJECTed (exit 3)",
+           verify_code(b) == judge_verify.EXIT_STRUCTURE)
+
+    # 7. Wrong qubit count -> structure reject.
+    b = copy.deepcopy(poc); b["constraints"]["n_qubits"] = 4
+    record("n_qubits mismatch REJECTed (exit 3)",
+           verify_code(b) == judge_verify.EXIT_STRUCTURE)
+
+    # 8. 2q-gate cap exceeded -> structure reject.
+    b = copy.deepcopy(poc); b["constraints"]["max_two_qubit_gates"] = 1
+    record("2q-gate cap exceeded REJECTed (exit 3)",
+           verify_code(b) == judge_verify.EXIT_STRUCTURE)
+
+    # 9. Underperforming circuit (valid but low fidelity) -> performance reject.
+    b = copy.deepcopy(poc)
+    b["circuit"]["ops"] = [{"gate": "h", "q": [0]}, {"gate": "cx", "q": [0, 1]}]
+    b["claim"]["fidelity"] = 0.25  # honest claim for this weaker circuit
+    record("honest-but-underperforming circuit REJECTed (exit 5)",
+           verify_code(b) == judge_verify.EXIT_PERFORMANCE)
+
+    # 10. capture.py round-trip: a captured bundle ACCEPTs under the judge.
+    circ = {"n_qubits": 3,
+            "ops": poc["circuit"]["ops"],
+            "constraints": poc["constraints"],
+            "classical_baseline": poc["classical_baseline"]}
+    spec_path = os.path.join(HERE, "_tmp_circuit.json")
+    with open(spec_path, "w") as f:
+        json.dump(circ, f)
+    try:
+        cap = subprocess.run([sys.executable, os.path.join(HERE, "capture.py"),
+                              spec_path, "ghz3", "--task", "state_prep"],
+                             capture_output=True, text=True)
+        bundle = json.loads(cap.stdout)
+        record("capture.py output ACCEPTs under judge", verify_code(bundle) == 0)
+    finally:
+        os.remove(spec_path)
+
+    # --- ANTI-OVERFIT gate (exit 6): the held-out generalization check ---------
+    # 12. genuine Bell state ACCEPTs end-to-end.
+    code, out = run_cli(os.path.join(HERE, "quantum-proof-pops.json"))
+    record("quantum-proof-pops.json (genuine Bell) ACCEPTs (exit 0)", code == 0, f"exit {code}: {out}")
+
+    # 13. wrong-phase impostor is REJECTed at the held-out gate.
+    code, out = run_cli(os.path.join(HERE, "quantum-proof-OVERFIT.json"))
+    record("quantum-proof-OVERFIT.json REJECTed at ANTI-OVERFIT (exit 6)",
+           code == judge_verify.EXIT_OVERFIT, f"exit {code}: {out}")
+
+    pops = load("quantum-proof-pops.json")
+    overfit = load("quantum-proof-OVERFIT.json")
+
+    # 14. the impostor passes structure/reproducibility/performance and fails ONLY exit 6.
+    record("overfit impostor fails ONLY at the held-out gate (exit 6)",
+           verify_code(overfit) == judge_verify.EXIT_OVERFIT)
+
+    # 15. control: same task, genuine circuit -> ACCEPT (the held-out gate is the sole difference).
+    record("genuine populations bundle ACCEPTs (exit 0)", verify_code(pops) == 0)
+
+    # 16. tampered populations claim -> reproducibility reject (gate independence).
+    b = copy.deepcopy(pops); b["claim"]["populations"] = [0.4, 0.0, 0.0, 0.6]
+    record("tampered populations claim REJECTed (exit 4)",
+           verify_code(b) == judge_verify.EXIT_REPRODUCIBILITY)
+
+    # 17. honest circuit that misses the target distribution -> performance reject.
+    b = copy.deepcopy(pops)
+    b["circuit"]["ops"] = [{"gate": "h", "q": [0]}]
+    b["claim"]["populations"] = [0.5, 0.0, 0.5, 0.0]  # honest for this weaker circuit
+    record("wrong-distribution populations REJECTed (exit 5)",
+           verify_code(b) == judge_verify.EXIT_PERFORMANCE)
+
+    # --- ARCHITECTURE task: topology design with held-out routing -------------
+    code, out = run_cli(os.path.join(HERE, "quantum-proof-arch.json"))
+    record("quantum-proof-arch.json (ring topology) ACCEPTs (exit 0)", code == 0, f"exit {code}: {out}")
+    code, out = run_cli(os.path.join(HERE, "quantum-proof-arch-OVERFIT.json"))
+    record("quantum-proof-arch-OVERFIT.json REJECTed at ANTI-OVERFIT (exit 6)",
+           code == judge_verify.EXIT_OVERFIT, f"exit {code}: {out}")
+    arch = load("quantum-proof-arch.json")
+    b = copy.deepcopy(arch); b["claim"]["routing_cost"] = 1
+    record("architecture tampered routing_cost REJECTed (exit 4)",
+           verify_code(b) == judge_verify.EXIT_REPRODUCIBILITY)
+    b = copy.deepcopy(arch)
+    b["architecture"]["coupling_map"] = [[0, 2], [2, 1], [1, 3]]  # path 0-2-1-3 -> visible cost 4
+    b["claim"]["routing_cost"] = 4
+    record("architecture over-budget routing REJECTed (exit 5)",
+           verify_code(b) == judge_verify.EXIT_PERFORMANCE)
+    b = copy.deepcopy(arch); b["architecture"]["coupling_map"] = [[0, 1], [0, 2], [0, 3]]  # degree 3
+    record("architecture degree-over-budget REJECTed (exit 3)",
+           verify_code(b) == judge_verify.EXIT_STRUCTURE)
+
+    # --- CLASSIFY task: QML feature map with held-out test set ----------------
+    code, out = run_cli(os.path.join(HERE, "quantum-proof-qml.json"))
+    record("quantum-proof-qml.json (low-frequency map) ACCEPTs (exit 0)", code == 0, f"exit {code}: {out}")
+    code, out = run_cli(os.path.join(HERE, "quantum-proof-qml-OVERFIT.json"))
+    record("quantum-proof-qml-OVERFIT.json REJECTed at ANTI-OVERFIT (exit 6)",
+           code == judge_verify.EXIT_OVERFIT, f"exit {code}: {out}")
+    qml = load("quantum-proof-qml.json")
+    b = copy.deepcopy(qml); b["claim"]["train_accuracy"] = 0.5
+    record("classify tampered train_accuracy REJECTed (exit 4)",
+           verify_code(b) == judge_verify.EXIT_REPRODUCIBILITY)
+    b = copy.deepcopy(qml)  # scale 0 -> Ry(0)=I -> <X>=0 -> predicts 0 for all -> train acc 0.5
+    b["feature_map"]["ops"][0]["scale"] = 0.0
+    b["claim"]["train_accuracy"] = 0.5
+    record("classify under-fit training REJECTed (exit 5)",
+           verify_code(b) == judge_verify.EXIT_PERFORMANCE)
+
+    # --- HARDWARE report overlay (real-QPU validation) -----------------------
+    hw = os.path.join(HERE, "hardware_report.py")
+    rep_path = os.path.join(HERE, "hardware-report-bell_pops2.json")
+    p = subprocess.run([sys.executable, hw, rep_path], capture_output=True, text=True)
+    record("hardware report consistent + sim-accepted (exit 0)", p.returncode == 0, p.stderr.strip())
+    rep = json.load(open(rep_path)); rep["measured"]["value"] = 0.30  # lie about the result
+    tmp = os.path.join(HERE, "_tmp_hw.json")
+    with open(tmp, "w") as f:
+        json.dump(rep, f)
+    try:
+        p = subprocess.run([sys.executable, hw, tmp], capture_output=True, text=True)
+        record("hardware report with a lying metric REJECTed (exit 4)", p.returncode == 4)
+    finally:
+        os.remove(tmp)
+
+    # run_on_hardware -> hardware_report round-trip on the local backend (no QPU/creds)
+    roh, rt = os.path.join(HERE, "run_on_hardware.py"), os.path.join(HERE, "_tmp_hwrt.json")
+    with open(rt, "w") as f:
+        subprocess.run([sys.executable, roh, os.path.join(HERE, "quantum-proof-pops.json"),
+                        "--observable", "XX", "--backend", "local-ideal", "--seed", "0"], stdout=f, check=True)
+    try:
+        p = subprocess.run([sys.executable, hw, rt], capture_output=True, text=True)
+        record("run_on_hardware -> hardware_report round-trip (exit 0)", p.returncode == 0, p.stderr.strip())
+    finally:
+        os.remove(rt)
+
+    # --- H2 molecular VQE (headroom problem) ----------------------------------
+    code, out = run_cli(os.path.join(HERE, "quantum-proof-h2.json"))
+    record("quantum-proof-h2.json (H2 ground-state ansatz) ACCEPTs (exit 0)", code == 0, f"exit {code}: {out}")
+    code, out = run_cli(os.path.join(HERE, "quantum-proof-h2-FORGED.json"))
+    record("H2 overclaim (claims exact E0 the ansatz misses) REJECTed (exit 4)",
+           code == judge_verify.EXIT_REPRODUCIBILITY, f"exit {code}: {out}")
+
+    # --- NOISY device prediction (deterministic density-matrix judge mode) ----
+    code, out = run_cli(os.path.join(HERE, "quantum-proof-noisy.json"))
+    record("quantum-proof-noisy.json (genuine on-device prediction) ACCEPTs (exit 0)", code == 0, f"exit {code}: {out}")
+    code, out = run_cli(os.path.join(HERE, "quantum-proof-noisy-FORGED.json"))
+    record("inflated on-device prediction REJECTed (exit 4)",
+           code == judge_verify.EXIT_REPRODUCIBILITY, f"exit {code}: {out}")
+    noisy = load("quantum-proof-noisy.json")
+    b = copy.deepcopy(noisy); del b["claim"]["noisy_fidelity"]
+    record("missing noisy_fidelity claim REJECTed (exit 2 schema)",
+           verify_code(b) == judge_verify.EXIT_SCHEMA)
+    # idle X-pairs keep the IDEAL state (fidelity 1.0) but mix the NOISY one below
+    # the device floor -> the noisy performance gate fires (exit 5), not exit 4.
+    b = copy.deepcopy(noisy)
+    b["circuit"]["ops"] = b["circuit"]["ops"] + [{"gate": "x", "q": [0]}] * 2 + [{"gate": "x", "q": [1]}] * 2
+    b["constraints"]["native_gates"] = ["h", "cx", "x"]  # allow the idle gates so STRUCTURE passes
+    nm = judge_verify.load_reference("bellnoisy2")["noise_model"]
+    tgt = np.array([1, 0, 0, 1], dtype=complex) / np.sqrt(2)
+    b["claim"]["noisy_fidelity"] = float(dm.state_fidelity_dm(dm.simulate_density(b["circuit"], nm), tgt))
+    record("noisy fidelity below the device threshold REJECTed (exit 5)",
+           verify_code(b) == judge_verify.EXIT_PERFORMANCE)
+
+    # density-matrix sim sanity: depolarizing law <X> = 1 - 4p/3 on |+>, trace preserved.
+    rho_dm = dm.simulate_density({"n_qubits": 1, "ops": [{"gate": "h", "q": [0]}]}, {"depolarizing_1q": 0.06})
+    xexp = dm.expectation_pauli_dm(rho_dm, [{"coeff": 1.0, "pauli": "x"}], 1)
+    record("density-matrix depolarizing law <X> = 1 - 4p/3 (deterministic)",
+           abs(xexp - (1 - 4 * 0.06 / 3)) < 1e-9 and abs(np.trace(rho_dm).real - 1.0) < 1e-9)
+
+    # --- CLASSIFY accuracy-from-counts (hardware report overlay) ---------------
+    qrep = os.path.join(HERE, "hardware-report-qml_sign1.json")
+    p = subprocess.run([sys.executable, hw, qrep], capture_output=True, text=True)
+    record("classify hardware report (accuracy recomputed from counts) consistent (exit 0)",
+           p.returncode == 0, p.stderr.strip())
+    rep = json.load(open(qrep)); rep["measured"]["value"] = 0.5  # lie about accuracy
+    tmpq = os.path.join(HERE, "_tmp_hwq.json")
+    with open(tmpq, "w") as f:
+        json.dump(rep, f)
+    try:
+        p = subprocess.run([sys.executable, hw, tmpq], capture_output=True, text=True)
+        record("classify hardware report with a lying accuracy REJECTed (exit 4)", p.returncode == 4)
+    finally:
+        os.remove(tmpq)
+
+    # --- HARDWARE-EFFICIENT ANSATZ (ghz3_he): h/cx must be decomposed to {rz,rx,cz} ---
+    code, out = run_cli(os.path.join(HERE, "quantum-proof-ghz3he.json"))
+    record("quantum-proof-ghz3he.json (native rz/rx/cz decomposition) ACCEPTs (exit 0)",
+           code == 0, f"exit {code}: {out}")
+    code, out = run_cli(os.path.join(HERE, "quantum-proof-ghz3he-NONNATIVE.json"))
+    record("textbook h/cx circuit on ghz3_he REJECTed at STRUCTURE (exit 3)",
+           code == judge_verify.EXIT_STRUCTURE, f"exit {code}: {out}")
+    he = load("quantum-proof-ghz3he.json")
+    # a single smuggled non-native entangler (cx where cz is required) -> structure reject.
+    b = copy.deepcopy(he)
+    b["circuit"]["ops"][6] = {"gate": "cx", "q": [0, 1]}
+    record("single smuggled cx on ghz3_he REJECTed (exit 3)",
+           verify_code(b) == judge_verify.EXIT_STRUCTURE)
+
+    # --- ERROR-MITIGATION-AWARE 2q COST: reference-pinned cap + cost-adjusted gate ---
+    # 22. a 3-cx GHZ variant (correct state, wasteful compilation, self-declared
+    #     loose budget) is REJECTED at STRUCTURE by the reference-pinned cap of 2.
+    code, out = run_cli(os.path.join(HERE, "quantum-proof-ghz3-3CX.json"))
+    record("3-cx GHZ variant REJECTed by the reference-pinned 2q cap (exit 3)",
+           code == judge_verify.EXIT_STRUCTURE, f"exit {code}: {out}")
+    # 23. the 2-cx reference solution still ACCEPTs under the tightened cap.
+    record("2-cx ghz3 reference solution still ACCEPTs under cap 2 (exit 0)",
+           verify_code(poc) == 0)
+    # 24. loosening the budget bundle-side cannot evade the reference cap (min-merge).
+    b = copy.deepcopy(poc)
+    b["constraints"]["max_two_qubit_gates"] = 99
+    b["circuit"]["ops"] = [{"gate": "cx", "q": [0, 1]}] + b["circuit"]["ops"]  # no-op cx on |000> -> 3 cx, state unchanged
+    record("bundle-declared loose 2q budget overridden by reference cap (exit 3)",
+           verify_code(b) == judge_verify.EXIT_STRUCTURE)
+    # 25. the 2q-cost PERFORMANCE sub-check: when each 2q gate is priced as the cost
+    #     unit, a circuit whose cost-adjusted fidelity no longer beats the classical
+    #     baseline is REJECTED at exit 5 (structure passes; the margin is eaten).
+    tmpd = tempfile.mkdtemp(prefix="qh-refs-")
+    try:
+        shutil.copytree(os.path.join(HERE, "references"), tmpd, dirs_exist_ok=True)
+        rp = os.path.join(tmpd, "ghz3.json")
+        with open(rp) as f:
+            r = json.load(f)
+        r["constraints"]["max_two_qubit_gates"] = 8                    # cap out of the way
+        r["thresholds"] = {"fidelity": 0.99, "two_qubit_cost": 0.3}    # price 2q gates heavily
+        with open(rp, "w") as f:
+            json.dump(r, f)
+        os.environ["QH_REFERENCES_DIR"] = tmpd
+        # poc: fidelity 1.0 with 2 cx -> adjusted 1.0 - 2*0.3 = 0.4 < baseline 0.5
+        record("2q-cost-adjusted fidelity below the classical baseline REJECTed (exit 5)",
+               verify_code(copy.deepcopy(poc)) == judge_verify.EXIT_PERFORMANCE)
+    finally:
+        os.environ.pop("QH_REFERENCES_DIR", None)
+        shutil.rmtree(tmpd)
+
+    # --- LARGER GHZ UNDER SPARSE COUPLING (ghz5_line, 32-amplitude statevector) ---
+    code, out = run_cli(os.path.join(HERE, "quantum-proof-ghz5line.json"))
+    record("quantum-proof-ghz5line.json (5-qubit cascade) ACCEPTs (exit 0)",
+           code == 0, f"exit {code}: {out}")
+    code, out = run_cli(os.path.join(HERE, "quantum-proof-ghz5line-COUPLING.json"))
+    record("cx 0,4 across the line REJECTed as a coupling violation (exit 3)",
+           code == judge_verify.EXIT_STRUCTURE, f"exit {code}: {out}")
+    # declaring a denser coupling map bundle-side cannot evade the reference pin.
+    g5 = load("quantum-proof-ghz5line-COUPLING.json")
+    b = copy.deepcopy(g5)
+    b["constraints"]["coupling_map"] = [[0, 1], [1, 2], [2, 3], [3, 4], [0, 4]]
+    record("bundle-declared denser coupling map overridden by reference pin (exit 3)",
+           verify_code(b) == judge_verify.EXIT_STRUCTURE)
+
+    n_pass = sum(1 for _, ok, _ in results if ok)
+    print(f"\n{n_pass}/{len(results)} checks passed")
+    return 0 if n_pass == len(results) else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

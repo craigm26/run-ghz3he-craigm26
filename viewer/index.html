@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>QuantumMytheme · quantum-harness — verifiable quantum design, the efficiency referee's wedge</title>
+<meta name="description" content="A verifiable-run bench that grades a model's quantum design with a hermetic four-gate judge — and the wedge for a verifiable-efficiency referee: one re-checkable yardstick for how machine intelligence gets more efficient. Hermetic, reproducible, honest about where quantum does and doesn't help." />
+<link rel="canonical" href="https://quantummytheme.com/" />
+<link rel="alternate" type="application/atom+xml" title="QuantumMytheme — frontier ledger" href="https://quantummytheme.com/feed.xml" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="QuantumMytheme" />
+<meta property="og:url" content="https://quantummytheme.com/" />
+<meta property="og:title" content="quantum-harness — verifiable quantum design, the wedge for a verifiable-efficiency referee" />
+<meta property="og:description" content="A prompt harness that grades a model's quantum design with a hermetic, deterministic four-gate judge. Reproducible on a laptop — numpy only, no QPU. The wedge for a verifiable-efficiency referee; honest about where quantum fits." />
+<meta property="og:image" content="https://quantummytheme.com/og.png" />
+<meta property="og:image:type" content="image/png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="quantum-harness — a four-gate judge (Structure → Reproducibility → Performance → Anti-overfit) resolving to ACCEPT, exit 0." />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://quantummytheme.com/og.png" />
+<meta name="twitter:title" content="quantum-harness — verifiable quantum design · efficiency referee" />
+<meta name="twitter:description" content="Point a capable model at a hard quantum design problem; a hermetic judge grades it. Reproducible, no QPU." />
+<link rel="stylesheet" href="style.css" />
+<script>/* set theme before paint to avoid flash */(function(){try{var q=new URLSearchParams(location.search).get('theme');var t=q||localStorage.getItem('qh-theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();</script>
+</head>
+<body>
+
+<!-- ===================== TITLE BLOCK ===================== -->
+<header class="hero" data-rail="Abstract">
+  <canvas id="ambient" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <div class="brandbar">
+      <div class="logo"><b>QuantumMytheme</b> · quantum-harness</div>
+      <div class="right">
+        <nav>
+          <a href="#why">Why</a>
+          <a href="#platform">Platform</a>
+          <a href="#judge">Judge</a>
+          <a href="education.html">Learn</a>
+          <a href="lab.html#studio">Studio</a>
+          <a href="#scoreboard">Scoreboard</a>
+          <a href="#run">Run yours</a>
+          <a href="lab.html">Notebook ↗</a>
+        </nav>
+        <button id="themeToggle" class="themebtn" aria-label="Switch colour theme">
+          <span class="dotmark" aria-hidden="true"></span><span id="themeLabel">Luminous mode</span>
+        </button>
+      </div>
+    </div>
+
+    <p class="preprint">Preprint · verifiable-efficiency referee</p>
+    <h1>Quantum design, <span class="ket">machine-checked.</span></h1>
+    <p class="subtitle">A prompt harness that grades a model's quantum design with a hermetic, deterministic judge — the hardest verifiability case, and the wedge for a referee of how machine intelligence gets more efficient.</p>
+
+    <div class="abstract">
+      <span class="lbl">Abstract</span>
+      <p>We point a capable model at a hard quantum design problem and grade its answer with a hermetic,
+        deterministic judge — four gates, no human in the scoring loop, every claim reproducible on a laptop
+        (numpy only, no QPU). A submission is re-derived from scratch and rejected if it violates its constraints,
+        fabricates a result, underperforms, or overfits a held-out check. The figures below run the real bench
+        math in your browser and are interactive — or open the <a href="lab.html">field notebook</a> to re-run any
+        verified circuit yourself, even the real numpy judge compiled to WebAssembly. Quantum design is the wedge —
+        the hardest verifiability case — for a larger aim: a <b>verifiable-efficiency referee</b> for the question of
+        how machine intelligence gets useful and far more efficient, mapped honestly (and without the hype) in the
+        <a href="education.html#m-efficiency">curriculum's North Star</a>.</p>
+    </div>
+
+    <div class="metrics">
+      <div class="metric"><b>4</b><span>active gates</span></div>
+      <div class="metric"><b>5</b><span>task types</span></div>
+      <div class="metric ok"><b>38/38</b><span>judge suite</span></div>
+      <div class="metric ok"><b>100%</b><span>node suite · 0 fail</span></div>
+      <div class="metric"><b>numpy</b><span>only · offline</span></div>
+    </div>
+
+    <div class="cta">
+      <a class="btn primary" href="lab.html">Open the field notebook ↗</a>
+      <a class="btn" href="education.html">Learn the arc</a>
+      <a class="btn" href="#scoreboard">See the scoreboard</a>
+      <a class="btn" href="https://github.com/QuantumMytheme/quantum-harness/generate">Use this template ↗</a>
+    </div>
+    <p class="note" style="margin-top:12px">New to all of this? The curriculum starts at “what is a bit?” — no background needed. <a href="education.html">Start learning →</a></p>
+  </div>
+</header>
+
+<!-- ===================== WHY ===================== -->
+<section id="why" data-rail="Why">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Why this exists</p>
+      <h2>A public workbench for verified quantum design — the referee's first bench</h2>
+      <p class="lead">The deeper aim is a <b>verifiable-efficiency referee</b> — one re-checkable yardstick for how machine
+        intelligence gets more efficient. We start with quantum design because it is the hardest verifiability case:
+        mint a public run, point your own model at a problem, and produce a result anyone can re-check. Three reasons
+        it's worth your time.</p>
+    </div>
+
+    <div class="why">
+      <div class="why-item">
+        <span class="why-n">01</span>
+        <h3>Contribute to science</h3>
+        <p>Every accepted run adds to an open, reproducible, re-verifiable corpus of quantum designs. Correctness is
+          scored without human taste — the simulator recomputes the number, so a result holds up or it doesn't.</p>
+      </div>
+      <div class="why-item">
+        <span class="why-n">02</span>
+        <h3>A scoreboard across paradigms</h3>
+        <p>The same hidden-graded problems let you compare design approaches head to head — which ansatz, which
+          topology, which feature map (and how each beats the classical baseline) currently leads. The frontier is public.</p>
+      </div>
+      <div class="why-item">
+        <span class="why-n">03</span>
+        <h3>For the curious, to hill-climb</h3>
+        <p>Point a capable model at a BRIEF and watch it loop to ACCEPT — then try to beat the best verified score with
+          fewer gates, a sparser map, or a simpler feature map. Hill-climb on a number a machine checks for you.</p>
+      </div>
+    </div>
+
+    <blockquote class="pull">Models are model-agnostic fuel. The judge doesn't care who — or what — produced a bundle;
+      it only re-simulates. Drive a run with <b>Opus 4.8</b> or <b>Fable 5</b> today; the harness is built to be ready for
+      the next-gen models you may know as <b>Mythos</b>.</blockquote>
+  </div>
+</section>
+
+<!-- ===================== EXPLORE THE PLATFORM ===================== -->
+<section id="platform" data-rail="Platform">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Explore the platform</p>
+      <h2>Four ways in — none of them leave your browser</h2>
+      <p class="lead">The bench isn't just a repo to read. It's a notebook you can re-run, a judge you can invoke,
+        and a curriculum that builds the idea from one gate to a public scoreboard. Pick a door.</p>
+    </div>
+
+    <div class="why two">
+      <div class="why-item">
+        <span class="why-n">NOTEBOOK</span>
+        <h3>The field notebook</h3>
+        <p>A tabbed lab — brief, field guide, atlas, register, primer — that walks every verified run and lets you
+          step the circuit, watch the Bloch sphere, and read the bundle that proves it.</p>
+        <a class="why-go" href="lab.html">Open the notebook</a>
+      </div>
+      <div class="why-item">
+        <span class="why-n">RE-RUN</span>
+        <h3>Re-run it yourself</h3>
+        <p>Hit <b>▸ run</b> on any scoreboard row to re-simulate it live in a hand-rolled statevector engine — or load
+          <b>the real numpy judge compiled to WebAssembly</b> and watch it re-derive the verdict, in-page.</p>
+        <a class="why-go" href="#scoreboard">Find a row to run</a>
+      </div>
+      <div class="why-item">
+        <span class="why-n">RECIPE</span>
+        <h3>Blend a recipe</h3>
+        <p>Select past runs as ingredients, set ratios and parameters with graphical toggles, and mint a fresh
+          problem-and-bundle for a brand-new repository — created straight from your Claude desktop, GitHub and all.</p>
+        <a class="why-go" href="lab.html#recipe">Open the recipe builder</a>
+      </div>
+      <div class="why-item">
+        <span class="why-n">LEARN</span>
+        <h3>Learn the arc</h3>
+        <p>A forty-slice animated curriculum in six parts: two ladders — classical, from a bit up to LLMs and
+          the silicon that runs them, and quantum, from a qubit up to error correction and real hardware — then
+          thirteen re-runnable landmark experiments, and <b>Part V, the North Star</b>: an honest map of where machine
+          intelligence actually gets more efficient, and where quantum does and doesn't fit.</p>
+        <a class="why-go" href="education.html">Start the curriculum</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== 1 · JUDGE ===================== -->
+<section id="judge" data-rail="Judge">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">The judge</p>
+      <h2>Four gates, first failure wins</h2>
+      <p class="lead">Every submission passes through four gates in order; the first it fails sets the exit code and
+        the verdict. Choose a submission and run it.</p>
+    </div>
+
+    <div class="controls">
+      <select id="bundleSel" class="btn" aria-label="Choose a submission"></select>
+      <button id="runBtn" class="btn primary">Run the judge ▸</button>
+      <span class="chip">re-simulated, not trusted</span>
+    </div>
+
+    <div class="pipeline">
+      <div class="gate"><div class="gnum">GATE 01</div><div class="gexit">exit 3</div><div class="gname">Structure</div><div class="gdetail">—</div><div class="pip"></div></div>
+      <div class="gate"><div class="gnum">GATE 02</div><div class="gexit">exit 4</div><div class="gname">Reproducibility</div><div class="gdetail">—</div><div class="pip"></div></div>
+      <div class="gate"><div class="gnum">GATE 03</div><div class="gexit">exit 5</div><div class="gname">Performance</div><div class="gdetail">—</div><div class="pip"></div></div>
+      <div class="gate"><div class="gnum">GATE 04</div><div class="gexit">exit 6</div><div class="gname">Anti-overfit</div><div class="gdetail">—</div><div class="pip"></div></div>
+    </div>
+
+    <div class="verdict-row">
+      <span id="verdict" class="verdict">ready</span>
+      <span class="note">The anti-overfit gate fires only when a problem holds out a check the model never saw — an observable, a workload, or a test set.</span>
+    </div>
+    <p class="figcap"><b>Figure 1.</b> A proof bundle is re-derived from scratch and passed through the four gates; the first failure decides the exit code.</p>
+  </div>
+</section>
+
+<!-- ===================== 2 · STATE ===================== -->
+<section id="state" data-rail="State">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">State preparation</p>
+      <h2>Entanglement leaves the surface</h2>
+      <p class="lead">Stepping the GHZ circuit. The sphere shows qubit 0; the bars show the full state, with colour
+        encoding the complex phase of each amplitude. When the entangling gate fires, qubit 0's vector retreats from
+        the surface to the centre — the signature of a maximally entangled state.</p>
+    </div>
+
+    <div class="split">
+      <div class="panel" style="padding:14px"><canvas id="bloch" class="stage"></canvas></div>
+      <div class="aside">
+        <div class="controls" style="margin:0">
+          <button id="blochPrev" class="btn">◂ prev</button>
+          <button id="blochNext" class="btn primary">next gate ▸</button>
+          <span class="steps" id="blochSteps" aria-hidden="true"></span>
+        </div>
+        <div class="panel" style="padding:12px"><canvas id="bars" class="stage"></canvas></div>
+        <div class="panel readout" id="blochReadout" style="padding:6px 16px"></div>
+      </div>
+    </div>
+    <p class="figcap"><b>Figure 2.</b> Qubit 0 of the GHZ circuit on the Bloch sphere; the amplitude bars are coloured by phase (hue) and amplitude (brightness).</p>
+  </div>
+</section>
+
+<!-- ===================== 3 · TOPOLOGY ===================== -->
+<section id="topology" data-rail="Topology">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Architecture — topology</p>
+      <h2>A topology that generalizes, or overfits</h2>
+      <p class="lead">Routing a workload of qubit interactions across a coupling map. A ring routes both the visible
+        and the held-out workload within budget; a linear path tuned to the visible pairs exceeds the held-out
+        budget and is rejected at the anti-overfit gate.</p>
+    </div>
+
+    <div class="split">
+      <div class="panel" style="padding:14px"><canvas id="topo" class="stage"></canvas></div>
+      <div class="aside">
+        <div class="controls" style="margin:0">
+          <button class="btn" data-mode="ring" aria-pressed="true">Ring</button>
+          <button class="btn" data-mode="path" aria-pressed="false">Path</button>
+        </div>
+        <div class="controls" style="margin:0">
+          <button class="btn" data-wl="vis" aria-pressed="false">Visible workload</button>
+          <button class="btn" data-wl="held" aria-pressed="true">Held-out workload</button>
+        </div>
+        <div class="panel readout" id="topoReadout" style="padding:6px 16px"></div>
+        <p class="note">Select <b>Path</b> with the <b>held-out workload</b>: the topology that aced the visible pairs now routes [0–3] the long way and exceeds the budget.</p>
+      </div>
+    </div>
+    <p class="figcap"><b>Figure 3.</b> Routing cost is the summed shortest-path distance over the required interactions; the held-out workload is the anti-overfit gate.</p>
+  </div>
+</section>
+
+<!-- ===================== 4 · QML ===================== -->
+<section id="qml" data-rail="QML">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Quantum machine learning</p>
+      <h2>The overfit, in one parameter</h2>
+      <p class="lead">A quantum feature map Ry(scale·x) labels points by the sign of ⟨X⟩ = sin(scale·x). Filled
+        dots are training data; ringed dots are the held-out test set. Raise the frequency: the curve still threads
+        every training point, but the test points are misclassified — what the held-out gate catches.</p>
+    </div>
+
+    <div class="split">
+      <div class="panel" style="padding:14px"><canvas id="clf" class="stage"></canvas></div>
+      <div class="aside">
+        <div class="controls" style="margin:0"><span class="chip" id="scaleTag">scale = 1.0</span></div>
+        <label class="note" for="scale">Feature-map frequency — drag from generalize to overfit</label>
+        <input id="scale" type="range" min="0.3" max="8" step="0.1" value="1" />
+        <div class="panel readout" id="clfReadout" style="padding:6px 16px"></div>
+      </div>
+    </div>
+    <p class="figcap"><b>Figure 4.</b> Decision curve of the feature map; held-out test accuracy below threshold triggers the anti-overfit gate (exit 6).</p>
+  </div>
+</section>
+
+<!-- ===================== SCOREBOARD ===================== -->
+<section id="scoreboard" data-rail="Scoreboard">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Scoreboard · the current frontier</p>
+      <h2>Seeded leaderboard — the baselines to beat</h2>
+      <p class="lead">A per-problem leaderboard of judge-ACCEPTED designs, ranked by the verified metric. Seeded with the
+        harness's reference baselines; every number is the judge's own and re-verifiable
+        (<span class="mono">scoreboard/verify.py</span> → 8/8 exit 0). No score here is self-reported — click
+        <b>▸ run</b> on any row to re-simulate it in your browser, or load the real judge as WebAssembly.</p>
+    </div>
+
+    <div id="sb-tools" class="sb-tools"></div>
+    <div class="panel results-wrap">
+      <table class="results">
+        <thead>
+          <tr><th>Problem · task</th><th>Paradigm</th><th>Verified metric</th><th>Quality · grade</th><th>Cost</th><th>Model</th><th>Proof</th></tr>
+        </thead>
+        <tbody id="sb-body">
+          <tr><td colspan="7" class="dimnum">loading verified runs… (click any row for the problem &amp; quality breakdown)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div id="sb-legend" class="sb-legend"></div>
+    <div id="sb-league" class="sb-league"></div>
+    <div id="sb-changelog" class="sb-changelog"></div>
+    <p class="figcap"><b>Table 1.</b> Seeded leaderboard. <b>Model</b> = <span class="mono">reference-baseline</span> — hand-authored
+      worked examples, not a model run; the bar to beat. A real run names the model it pointed at the BRIEF and links its own
+      public run repo. Model is provenance, never a ranking key — the judge re-simulates regardless of author.
+      <b>⚛</b> marks a hardware overlay (the design also run on a device; the sim score stays the rank).
+      <span id="sb-meta" class="dimnum"></span></p>
+
+    <div class="why-leads">
+      <h3>Why each leads</h3>
+      <ul id="sb-why">
+        <li><b>ghz3</b> — perfect fidelity at the minimal cost for GHZ on a line; nothing cheaper reaches the target.</li>
+        <li><b>isingbell2</b> — the exact ground state (gap 0) at depth 2; entangling beats the product-state baseline.</li>
+        <li><b>bell_pops2</b> — matches the visible populations <em>and</em> the hidden ⟨X₀X₁⟩=+1; clears the gate the impostor fails.</li>
+        <li><b>aiaccel4</b> — a ring routes the visible <em>and</em> held-out workloads within budget; the overfit path is rejected.</li>
+        <li><b>qml_sign1</b> — 100% train and held-out test with one rotation; a high-frequency map overfits and can't qualify.</li>
+      </ul>
+    </div>
+
+    <div class="cta">
+      <a class="btn" href="https://github.com/QuantumMytheme/quantum-harness/blob/main/SCOREBOARD.md">Full scoreboard + rules ↗</a>
+      <a class="btn" href="https://github.com/QuantumMytheme/quantum-harness/blob/main/scoreboard/entries.json">entries.json ↗</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FRONTIER (wanted board + Pareto atlas — rendered by frontier.js) ===================== -->
+<section id="frontier" data-rail="Frontier"><div class="wrap" id="frontier-root"></div></section>
+
+<!-- ===================== RUN YOURS ===================== -->
+<section id="run" data-rail="Run">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Do your own run</p>
+      <h2>Bring your own model. Take rank 1.</h2>
+      <p class="lead">Each run lives in its own public repo. You bring the model — your Claude subscription, or API /
+        token credits. The judge never holds your credits; it only structures the run and verifies the output.</p>
+    </div>
+
+    <div class="split">
+      <ol class="runsteps">
+        <li><b>Mint a run repo</b> from the template. <span class="mono">bin/new-run.sh my-run --remix tfim3</span> pre-loads the current frontier (prior designs + circuits) for your model to remix and beat.</li>
+        <li><b>Pick or write a BRIEF</b> — the problem stated conceptually; the answer key stays host-side with the judge.</li>
+        <li><b>Run the kickoff</b> with your model — it self-corrects against the rubric until the judge ACCEPTs.</li>
+        <li><b>Commit the result back</b> — the proof bundle, the verdict (exit 0), the scrubbed transcript, the scorecard; push, and register a scoreboard row.</li>
+      </ol>
+      <div class="aside">
+        <div class="panel" style="padding:20px">
+          <p class="note" style="margin-bottom:14px">The run repo is the permanent, public, re-verifiable record. Anyone re-runs the judge on your committed bundle and gets the same verdict — that's the whole contract.</p>
+          <p class="note" style="margin-bottom:14px">No terminal? Open the <a href="lab.html#recipe">recipe builder</a>, sign in with GitHub, and mint a fresh
+            run repo — ingredients, ratios, and the first bundle — without leaving your browser.</p>
+          <div class="cta" style="margin:0">
+            <a class="btn primary" href="lab.html#recipe">Mint from the notebook ↗</a>
+            <a class="btn" href="https://github.com/QuantumMytheme/quantum-harness/blob/main/GETTING-STARTED.md">Getting started ↗</a>
+            <a class="btn" href="https://github.com/QuantumMytheme/quantum-harness/generate">Use this template ↗</a>
+            <a class="btn" href="https://github.com/QuantumMytheme">The org ↗</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="foot">
+  <div class="wrap">
+    <div class="legend">
+      <span class="wheel" aria-hidden="true"></span>
+      <small>hue = phase&nbsp;·&nbsp;brightness = amplitude<br>(luminous mode)</small>
+    </div>
+    <div style="text-align:right">
+      <div class="mono" style="color:var(--ink-2)">QuantumMytheme / quantum-harness</div>
+      <div class="mono" style="margin-top:6px"><span class="tag">MIT</span> <span class="tag">numpy-only judge</span> <span class="tag">offline</span></div>
+      <div class="mono" style="margin-top:9px;color:var(--faint)">The platform — bench · notebook · curriculum · in-browser runner · <span id="year">2026</span></div>
+    </div>
+  </div>
+</footer>
+
+<script src="scoreboard-data.js"></script>
+<script src="knowledge.js"></script>
+<script src="runner.js"></script>
+<script src="app.js"></script>
+<script src="frontier.js"></script>
+<script src="railnav.js"></script>
+<script src="census.js"></script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+{
+  "manifest_version": "0.2",
+  "name": "quantum-harness",
+  "display_name": "QuantumMytheme · quantum-harness",
+  "version": "0.1.0",
+  "description": "Drive the verifiable quantum-design bench from inside Claude: list problems, read a BRIEF, re-verify a proof bundle through the real numpy judge, and mint a public run repo.",
+  "long_description": "A dependency-free MCP connector for QuantumMytheme/quantum-harness. It exposes the harness in the Claude Desktop app so a run never has to leave the chat: pick an open quantum-design problem, read its conceptual BRIEF, design a proof bundle, and re-derive it through the real four-gate numpy judge (structure → reproducibility → performance → anti-overfit) — the exit code is the result, not a claim. mint_run creates a fresh public run repository from the template, and commit_run writes the bundle straight to it via the GitHub Contents API — no Docker, no git, no second connector.",
+  "author": { "name": "QuantumMytheme", "url": "https://quantummytheme.com" },
+  "homepage": "https://quantummytheme.com",
+  "documentation": "https://github.com/QuantumMytheme/quantum-harness/blob/main/CLAUDE-DESKTOP.md",
+  "license": "MIT",
+  "keywords": ["quantum", "verification", "judge", "citizen-science", "mcp"],
+  "server": {
+    "type": "node",
+    "entry_point": "server.mjs",
+    "mcp_config": {
+      "command": "node",
+      "args": ["${__dirname}/server.mjs"],
+      "env": { "GITHUB_TOKEN": "${user_config.github_token}" }
+    }
+  },
+  "tools": [
+    { "name": "list_problems", "description": "List the open problems the judge can grade." },
+    { "name": "get_brief", "description": "Read a problem's BRIEF — the target stated conceptually." },
+    { "name": "get_kickoff", "description": "Read KICKOFF.md — the one-message run contract." },
+    { "name": "verify_bundle", "description": "Re-derive a proof bundle through the real four-gate numpy judge." },
+    { "name": "mint_run", "description": "Create a fresh public run repository from the template." },
+    { "name": "commit_run", "description": "Commit a proof bundle to a run repo via the GitHub Contents API (no Docker, no git); refuses a REJECT by default." },
+    { "name": "mint_recipe", "description": "Mint a FULL-STACK design run repo: create it from the template and write the RECIPE.json (hardware + software) into it; reports whether the hardware target is referee-pinned." }
+  ],
+  "user_config": {
+    "github_token": {
+      "type": "string",
+      "title": "GitHub token",
+      "description": "GitHub token used by mint_run (create your run repo) and commit_run (write the bundle to it). Least privilege: a fine-grained PAT with Administration:write + Contents:write and a short expiry; classic public_repo also works. Leave blank to skip minting/committing — every other tool works without it.",
+      "sensitive": true,
+      "required": false
+    }
+  },
+  "compatibility": {
+    "claude_desktop": ">=0.10.0",
+    "platforms": ["darwin", "win32", "linux"],
+    "runtimes": { "node": ">=18.0.0" }
+  }
+}

@@ -1,0 +1,474 @@
+# SCOREBOARD — a per-problem leaderboard of judge-ACCEPTED designs
+
+[![judge](https://img.shields.io/badge/score-machine--checked-2ea44f)](bench/quantum-judge/README.md)
+[![no self-report](https://img.shields.io/badge/numbers-re--verifiable-blue)](RUBRIC.md)
+[![phase 1](https://img.shields.io/badge/board-viewer%20live%20%C2%B7%20CI%20gated-2ea44f)](https://quantummytheme.com/#scoreboard)
+
+The scoreboard is the public answer to one question: **on this exact problem, which
+design currently leads — and can I re-derive that for myself?** It exists because a
+verified corpus is only worth something if anyone can check it. So no number here is
+self-reported. Every row links a committed **proof bundle**, and the rank is whatever
+`bench/quantum-judge/judge_verify.py` recomputes when you re-run it on your own laptop
+(numpy only, offline, no QPU). If you don't believe a score, re-run the judge — that's
+the whole point, and you are warmly invited to.
+
+This is a convention, not (yet) a website. Read [§ Status](#status-honest) before you
+expect a hosted board.
+
+---
+
+## (a) What the scoreboard is
+
+A **per-`problem_id` leaderboard of judge-ACCEPTED submissions.** One board per problem
+(`ghz3`, `isingbell2`, `bell_pops2`, `aiaccel4`, `qml_sign1`, and any new problem you
+add). A submission is eligible for a board **iff** its proof bundle exits `0` under
+`judge_verify.py` — it cleared all four gates: STRUCTURE (exit 3), REPRODUCIBILITY
+(exit 4), PERFORMANCE (exit 5), and, where the reference declares a `holdout` block,
+ANTI-OVERFIT (exit 6). A bundle that REJECTs is not "low-ranked"; it is **not on the
+board at all.** The board is a record of designs that genuinely worked, sorted by how
+well.
+
+The bar is correctness scored without human taste. The frontier is who clears it best.
+
+---
+
+## (b) Ranking — primary verified metric, then resource-efficiency tie-breaks
+
+Rows are ranked by the **primary verified metric** for that problem's task — the same
+number the PERFORMANCE gate already recomputes from scratch. **Higher rank = better
+design.** Ties on the primary metric break on **resource efficiency**, read directly
+from the judge's emitted `checks.structure` (and, for architecture, the verified
+`routing_cost`). Nothing here is hand-counted.
+
+| task | primary verified metric | better is | tie-breaks (in order) |
+|---|---|---|---|
+| `state_prep` | `fidelity` (vs hidden target) | higher | `two_qubit_gates` ↑less · `depth` ↑less · `n_qubits`/total gates ↑less |
+| `vqe` | energy **gap to E0** = `energy − ground_state_energy` | lower (closer to 0) | `two_qubit_gates` ↑less · `depth` ↑less |
+| `populations` | matches visible distribution **and** passes held-out `<X₀X₁>` | pass (then by margin) | `two_qubit_gates` ↑less · `depth` ↑less |
+| `architecture` | verified `routing_cost` over the workload | lower | total edges ↑fewer · `max_degree` ↑lower (sparser map) |
+| `classify` | held-out `test_accuracy` (generalization), then `train_accuracy` | higher | feature-map ops ↑fewer · `two_qubit_gates` ↑less · `n_qubits` ↑less |
+
+Why these tie-breaks: the metric says *is the design correct enough*; the resource
+costs say *how cheaply*. A GHZ state at fidelity 1.0 with 2 two-qubit gates beats the
+same fidelity with 6 of them — fewer entangling gates, less depth, less routing
+overhead is the real engineering win. **Gate count, two-qubit-gate count, and circuit
+depth** are the universal currency; **routing cost** is the architecture currency. All
+are first-class machine-read numbers (rubric **R5**), never prose.
+
+For `classify`, generalization is the headline: the bench is built to punish overfit, so
+the board ranks by **held-out** `test_accuracy` first — a `Ry(7x)` map that nails the
+training set but oscillates on the held-out test does not even make the board (it exits
+6), let alone top it.
+
+---
+
+## (c) The `paradigm` tag — what's actually being compared
+
+Each entry carries a **`paradigm`** tag: a short, honest label for the *design approach*
+the row represents, so the board shows **which paradigm currently leads each problem**.
+This is the comparative heart of the project — not "model X vs model Y" (the judge is
+model-agnostic; see below), but **design idea vs design idea** on identical, hidden-graded
+problems. Pick or coin a tag that names the actual choice you made.
+
+So the comparison survives many contributors coining their own spellings (`qaoa` vs
+`QAOA p=2 (…)` vs `ansatz-qaoa`), an entry may also carry a **`family`** field from a
+small controlled vocabulary — the stable grouping key, while `paradigm` stays the
+free-text human label: `qaoa` · `hardware-efficient` · `brickwork` · `ring` · `grid` ·
+`heavy-hex` · `low-frequency-encoding` · `classical-baseline` · `other`. The merge gate
+(`scoreboard/verify.py`) checks it and **warns — never rejects** — when it is missing or
+unknown (a `paradigm_short` that already equals a family name counts as the tag).
+Suggested vocab for the free-text tag:
+
+- **Ansatz family** (state tasks): `hardware-efficient` vs `problem-specific` /
+  `chain-cascade` vs `brickwork` vs `qaoa-p1` …
+- **Topology family** (architecture): `ring` vs `grid` vs `heavy-hex` vs `star` vs
+  `linear-chain` …
+- **Feature map / model family** (classify): `low-frequency-encoding` vs
+  `high-frequency-encoding` vs `classical-baseline` …
+- **Classical baselines welcome and encouraged.** Tag them `classical-baseline`. A
+  paradigm board that includes the best classical approach is the honest one — it shows
+  exactly *where* (and whether) a quantum design pulls ahead. The judge already requires
+  every quantum entry to beat or tie a stated classical baseline (PERFORMANCE gate); the
+  scoreboard lets the classical approach stand as its own row so the gap is visible.
+
+Read across a problem's board and the leading `paradigm` tag is the takeaway: *on
+`aiaccel4`, the `ring` topology currently leads the `linear-chain`; on `qml_sign1`,
+`low-frequency-encoding` generalizes where `high-frequency-encoding` can't even qualify.*
+
+---
+
+## (d) Entry format — every row links a re-verifiable proof bundle
+
+An entry is one small JSON object (or one Markdown table row). The **load-bearing field
+is `proof_bundle`**: a path, in a committed public run repo, to the exact bundle the
+judge re-verifies. No score is admissible without it.
+
+```jsonc
+{
+  "problem_id":      "ghz3",                  // which board this row joins
+  "paradigm":        "chain-cascade-ansatz",  // the design approach being compared (c)
+  "model":           "opus-4.8",              // provenance only — NOT a ranking key (see below)
+  "verified_metric": { "name": "fidelity", "value": 1.0 },   // the primary metric (b)
+  "resource_costs":  { "depth": 3, "two_qubit_gates": 2, "n_qubits": 3 },  // judge-emitted (R5)
+  "run_repo":        "https://github.com/QuantumMytheme/run-ghz3-chaincascade",
+  "proof_bundle":    "bench/quantum-judge/quantum-proof-poc.json",  // path within run_repo
+  "judge_exit":      0,                        // MUST be 0; anything else is not on the board
+  "verified_at":     "2026-06-16"              // when the submitter last re-ran the judge
+}
+```
+
+`verified_metric.name` is the task's primary metric: `fidelity` (state_prep), `energy`
+with the gap to E0 derived by the judge (vqe), `populations` + held-out observable pass
+(populations), `routing_cost` (architecture), `test_accuracy` (classify).
+`resource_costs` mirrors the judge's `checks.structure` block — copy it, don't compute it
+by hand; the judge prints it on ACCEPT (`--json`). For `architecture`, also carry the
+verified `routing_cost`; for `classify`, also carry `train_accuracy`.
+
+As a Markdown row (how a problem's board renders):
+
+| rank | paradigm | metric | resource_costs | model | proof_bundle |
+|---|---|---|---|---|---|
+| 1 | `ring` | routing_cost **2** | edges 4 · max_degree 2 | opus-4.8 | [run-aiaccel4-ring › quantum-proof-arch.json](https://github.com/QuantumMytheme) |
+| 2 | `linear-chain` | routing_cost **4** | edges 3 · max_degree 2 | classical-baseline | [run-aiaccel4-chain › …](https://github.com/QuantumMytheme) |
+
+> **`model` is provenance, never a ranking key.** Models are model-agnostic *fuel*. The
+> judge does not care who — or what — produced a bundle; it only re-simulates. Today
+> people drive runs with Opus 4.8 / Fable 5, and the harness is built to be ready for the
+> next-gen models you may hear called *Mythos* — but the board ranks **designs**,
+> not authors. Record `model` so the corpus is honest about provenance; rank on the
+> verified metric and resource costs.
+
+---
+
+## (e) How entries get added — the judge is the merge gate
+
+Adding a row is **opening a PR that registers your run**. The judge re-verifies as the
+merge gate; no maintainer scores anything by taste. The flow mirrors
+[CONTRIBUTING.md](CONTRIBUTING.md):
+
+1. **Do a run.** Mint a fresh public run repo from this template (`bin/new-run.sh
+   <run-name>`, or use the GitHub "Use this template" button), pick or write a BRIEF,
+   run `KICKOFF.md` with your capable model, and let it self-correct against the rubric
+   until `judge_verify.py` exits `0`. Commit the **proof bundle, the judge verdict (exit
+   0), the scrubbed transcript, and the autonomy scorecard** back to your run repo, then
+   push. That public run repo is the permanent, re-verifiable record — it is where the
+   number actually lives.
+2. **Open a registration PR** adding your entry object/row (the format in (d)), linking
+   `run_repo` + `proof_bundle`.
+3. **The merge gate re-verifies.** A PR is mergeable **only if**:
+   - `scoreboard/verify.py` passes the entry: the judge re-runs the bundle against the
+     held-out references (exit `0`), the bundle's **own `problem_id`/`task` match the
+     entry's** (you cannot point at someone else's ACCEPTing bundle), the claimed
+     `verified_metric.value` **matches the judge's recompute** (an entry whose metric
+     the judge cannot recompute FAILs — it would be self-reported), and the claimed
+     `resource_costs` match the judge's `checks.structure`, **and**
+   - the regression suites stay green — `python3 bench/quantum-judge/test_judge.py`,
+     `python3 scoreboard/test_verify.py`, and `node --test test/*.test.mjs` all pass
+     with `0` failures (each run prints its live count).
+4. **Re-verification, not negotiation.** No human reviewer overrides a REJECT into a
+   merge. If the judge accepts and the suite is green, the row earns its place; the
+   ranking follows mechanically from (b).
+
+Because every entry links a committed bundle, anyone can audit the whole board with one
+loop — `for b in $(bundles); do judge_verify.py "$b"; done` — and reproduce every rank.
+That is the contract: **re-verifiable by re-running the judge, or it doesn't count.**
+
+---
+
+## Seeded boards — the current frontier
+
+These five boards are **seeded with the harness's reference baselines**: the committed
+worked examples, one per problem, the bar every run aims to match or beat. Every number
+below is the judge's own emitted value — run **`python3 scoreboard/verify.py`** to
+re-derive all five offline (it re-runs `judge_verify.py` on each linked bundle; today it
+reports `5/5 re-verified, exit 0`). Machine-readable data:
+[`scoreboard/entries.json`](scoreboard/entries.json).
+
+**On model usage.** The seed rows are tagged `reference-baseline` — *no autonomous model
+produced them; they are hand-authored worked examples.* When you do a run, your row names
+the model you pointed at the BRIEF (e.g. `opus-4.8`, `fable-5`, or a next-gen model) and
+links **your own** public run repo. `model` is provenance, never a ranking key — the judge
+re-simulates regardless of author. The bundles below live in the repository that holds the
+harness, [`QuantumMytheme/quantum-harness`](https://github.com/QuantumMytheme/quantum-harness).
+
+### `ghz3` · state_prep
+| rank | paradigm | verified metric | resources | model | proof bundle |
+|---|---|---|---|---|---|
+| 1 | `chain-cascade` | fidelity **1.000** (≥ 0.99; baseline 0.5) | 2q-gates 2 · depth 3 | `reference-baseline` | [quantum-proof-poc.json](https://github.com/QuantumMytheme/quantum-harness/blob/main/bench/quantum-judge/quantum-proof-poc.json) |
+
+**Why it leads —** perfect fidelity at the minimal cost for a GHZ state on the `[0-1-2]`
+coupling map (depth 3, two CX). Nothing reaches the target with fewer entangling gates; only
+a tie at lower cost could outrank it.
+
+### `isingbell2` · vqe
+| rank | paradigm | verified metric | resources | model | proof bundle |
+|---|---|---|---|---|---|
+| 1 | `minimal-bell-ansatz` | energy gap **0.000** to E0 = −2 (budget 0.05; baseline −1) | 2q-gates 1 · depth 2 | `reference-baseline` | [quantum-proof-vqe.json](https://github.com/QuantumMytheme/quantum-harness/blob/main/bench/quantum-judge/quantum-proof-vqe.json) |
+
+**Why it leads —** reaches the *exact* ground state (gap 0.000) at depth 2 with a single CX;
+the Bell state is the true ground state of `H = −X₀X₁ − Z₀Z₁`, and entangling beats the best
+product-state baseline (−1). You cannot improve on a zero gap — only tie it more cheaply.
+
+### `bell_pops2` · populations
+| rank | paradigm | verified metric | resources | model | proof bundle |
+|---|---|---|---|---|---|
+| 1 | `phase-correct-bell` | held-out ⟨X₀X₁⟩ **+1.00** ✓ · populations dev 0.000 | 2q-gates 1 · depth 2 | `reference-baseline` | [quantum-proof-pops.json](https://github.com/QuantumMytheme/quantum-harness/blob/main/bench/quantum-judge/quantum-proof-pops.json) |
+
+**Why it leads —** matches the visible 50/50 populations **and** the hidden held-out
+⟨X₀X₁⟩ = +1 — the genuine `|Φ+>`, not a phase-flipped impostor that games only the visible
+spec. It clears the anti-overfit gate (exit 6) the OVERFIT fixture fails.
+
+### `aiaccel4` · architecture
+| rank | paradigm | verified metric | resources | model | proof bundle |
+|---|---|---|---|---|---|
+| 1 | `ring` | routing_cost **2** (budget 2; baseline 4) · held-out **2** | edges 4 · max_degree 2 | `reference-baseline` | [quantum-proof-arch.json](https://github.com/QuantumMytheme/quantum-harness/blob/main/bench/quantum-judge/quantum-proof-arch.json) |
+
+**Why it leads —** a ring routes **both** the visible and the held-out workload at cost 2
+within the degree-2 budget, beating the linear-chain baseline (4). It *generalizes* — the
+overfit path that aces the visible pairs blows the held-out budget and is rejected at exit 6.
+Only a sparser map at equal cost could outrank it.
+
+### `qml_sign1` · classify
+| rank | paradigm | verified metric | resources | model | proof bundle |
+|---|---|---|---|---|---|
+| 1 | `low-frequency-encoding` | held-out test acc **100%** · train **100%** | ops 1 · n_qubits 1 | `reference-baseline` | [quantum-proof-qml.json](https://github.com/QuantumMytheme/quantum-harness/blob/main/bench/quantum-judge/quantum-proof-qml.json) |
+
+**Why it leads —** 100% train **and** 100% held-out test accuracy with a single rotation.
+A high-frequency `Ry(7x)` map also nails training but fails the held-out test (exit 6) and
+can't qualify; generalization is the headline metric, and nothing simpler generalizes.
+
+> **These are baselines, not ceilings.** Each row is the design to beat — tie the metric with
+> fewer two-qubit gates, route on a sparser map, or generalize with a simpler feature map, and
+> your run takes rank 1. Open a registration PR; the judge re-verifies.
+
+---
+
+## Hardware overlay — validate on a real QPU
+
+The sim score is the canonical rank. If you have a quantum chip, you can attach a
+**hardware overlay** to any sim-ACCEPTed design: run the same circuit on your device and
+report the measured metric. A hardware report (`hardware-report@1`) is checked two ways —
+the metric is **recomputed from your raw counts** (re-verifiable; a number that doesn't
+match its own data is rejected), and the provenance is **attested** (backend, job id,
+calibration — trusted-but-labeled, since a device run isn't re-executable by a third
+party). A hardware overlay **never outranks** the sim score; it shows *"validated on
+`ibm_torino`, ⟨X₀X₁⟩ = 0.94, 4096 shots."* Full flow + format: **[HARDWARE.md](HARDWARE.md)**.
+
+> **Emulation is never hardware.** An overlay whose backend is emulated or synthetic
+> (an explicit `"emulated": true`, or a backend named `emulated` / `synthetic` /
+> `simulat…` / `local-…`) is honest data, but it is **not a device run**. The
+> aggregator (`scoreboard/build.mjs`) detects it, labels it **`noisy-sim`** inline on
+> the board (not tooltip-only), withholds the hardware robustness credit (a smaller,
+> separately-labeled noisy-sim credit applies instead), and it does **not** satisfy a
+> problem's "hardware overlay" cell on the wanted board. Only a real device run does.
+
+**All reports, with deltas.** `hardware_reports` is an array and the board emits
+**every** report (never just the first), each with a computed **sim-vs-hw delta**
+(measured − sim, plus a percent) wherever the report's metric is comparable to a
+sim-side number — shown inline per row. Multi-backend reports on the same design are
+the raw material for an honest per-backend noise landscape; when no comparable sim
+number exists the delta stays `null` rather than being guessed.
+
+---
+
+## (c2) The paradigm league — §(c) answered at corpus level, honestly
+
+The aggregator also rolls every verified run up into a **paradigm league**
+(`paradigms` in the generated board data; rendered under the scoreboard): one row per
+**(paradigm family × task)** pair, carrying `n` (verified runs), boards entered,
+rank-1 count, mean margin, mean efficiency (both reusing the quality axes above), and
+the list of same-task problems that paradigm has **not** yet entered — which
+cross-links straight into the wanted board's empty cells.
+
+Two hard honesty rules, enforced in the data and mirrored in the viewer:
+
+1. **n < 3 is an anecdote, not evidence.** Any aggregate with fewer than three
+   verified runs carries `evidence: false` and renders greyed with an explicit
+   *"n=1 — anecdote, not evidence"* badge. Today **every** cell is small-n; the
+   table says so instead of dressing means of one number up as findings.
+2. **No cross-task ranking, ever.** Groups are (paradigm × task) pairs; different
+   tasks are different games, and the league never orders paradigms across them.
+
+An untested cell is **untried** — the league never claims a gap is impossible or easy.
+
+---
+
+## (c3) The frontier ledger — an append-only log of "the frontier moved"
+
+Every rebuild diffs the freshly-computed board against the committed
+[`scoreboard/frontier-history.json`](scoreboard/frontier-history.json) and **appends**
+typed events — `NEW_LEADER` (a rank-1 dethroned), `PARETO_EXPANSION` (a new
+non-dominated point), `NEW_PARADIGM` (a design family's first appearance, when no
+other event already names it), `NEW_PROBLEM` (a board opened), `GAP_NARROWED` (the
+runner-up closed on the leader). Three surfaces, all generated from the same ledger:
+
+- **the history file** — append-only (`events` are never rewritten; the `snapshot`
+  is just the cache the next diff runs against), committed alongside the board;
+- **[`viewer/feed.xml`](https://quantummytheme.com/feed.xml)** — an Atom feed of the
+  last ~50 events, so "check the site weekly" becomes "subscribe once". Every event
+  body carries the judge-emitted numbers and the exact re-verify command
+  (`python3 bench/quantum-judge/judge_verify.py <bundle>`) — an alert is a claim a
+  stranger can recheck;
+- **the "Frontier changelog" timeline** under the scoreboard (last ~10 events).
+
+**Dates, honestly.** An event's `date` is the triggering entry's `verified_at` (the
+submitter's last judge re-run) — the build **never** stamps events with its own
+clock, so a no-event rebuild is byte-stable under the `--check` staleness gate. If
+the operator wants a "when observed" stamp they pass `--now YYYY-MM-DD`, which is
+stored as `observed` only on genuinely-appended events; by default the field is
+omitted. The first ledger entries were **backfilled at genesis** from the
+then-current board state and are flagged `genesis: true` — the true opening order
+predates the ledger, and the events say so rather than pretending to a history the
+file wasn't there to witness.
+
+---
+
+## (c4) Cite this run — the citation IS the reproduction instructions
+
+Every scoreboard row has a **cite** button exporting **BibTeX** and **CSL-JSON**
+pinned to the proof bundle: the bundle's **sha256** plus the exact offline re-verify
+command (`python3 bench/quantum-judge/judge_verify.py <bundle>`). Citing a number
+here means handing your reader everything needed to recheck it — the exports say
+*"machine-verified by a re-runnable judge, not peer review"* in so many words.
+
+Hash-pinning rules:
+
+- the sha256 is computed by `scoreboard/build.mjs` over the **raw committed file
+  bytes** (`sha256sum` semantics, lowercase hex) — never over re-parsed/re-serialized
+  JSON — so the same bundle hashes identically everywhere (build, `verify.py
+  --attest`, an in-browser `fetch → arrayBuffer → SHA-256`);
+- an **external run-repo bundle is not committed in this repository**, and the build
+  is offline — so its hash cannot be computed honestly at build time. The export
+  says **"hash unavailable — re-verify from the run repo"** (with a fetch-and-judge
+  command) rather than faking a pin.
+
+---
+
+## (c5) Reproduced ×N — third-party re-verification attestations
+
+Re-running the judge is the platform's core invitation; attestations make it leave a
+public trace. The flow (**PR-only** — zero new attack surface):
+
+1. **Re-verify a row yourself**, and mint the attestation in one step:
+
+   ```bash
+   python3 scoreboard/verify.py --attest ghz3 --handle your-github-handle
+   # ambiguous board? disambiguate:  --attest tfim3:qaoa
+   # or point straight at a bundle:  --attest path/to/bundle.json
+   ```
+
+   This re-runs the **full merge gate** (judge ACCEPT + entry↔bundle binding +
+   metric/resource recompute) and, **only on ACCEPT**, writes a one-line attestation
+   JSON — `{bundle_sha256, problem_id, handle, judge_exit, date}` — under
+   [`scoreboard/attestations/`](scoreboard/attestations/). A REJECT is refused; there
+   is nothing to attest.
+2. **Commit that file on a branch and open a PR.** The regular merge gate re-runs the
+   suites; nothing else changes.
+3. **The board counts it.** `build.mjs` tallies attestations per **bundle sha256**
+   (raw committed file bytes, lowercase hex — the same hash the cite button pins) and
+   the row grows a **reproduced ×N** badge.
+
+Honesty rules: an attestation whose hash matches **no committed bundle is skipped and
+logged**, never counted. `N` counts **distinct handles** — re-attesting doesn't
+inflate it. The handle is **self-declared** (attested, trusted-but-labeled — the same
+vocabulary as HARDWARE.md provenance), and the badge **never changes rank**; the row
+still says *re-run it yourself*. The first attestation on the board is the
+maintainer's own labeled re-run (`quantum-harness-ci`) — seeded to prove the flow,
+not to be mistaken for independent replication. A design-hash "auto-reproduced" badge
+was considered and **rejected**: independently re-running the judge is reproduction;
+copying a design file is not.
+
+---
+
+## (f) Status — honest
+
+**Phase 1 is now partly shipped.** An **aggregator** (`scoreboard/build.mjs`) ranks
+`scoreboard/entries.json` per problem (the rules in (b)) and generates the data the
+**viewer renders** — the live board is the Scoreboard section at
+<https://quantummytheme.com/#scoreboard>. CI
+(`.github/workflows/scoreboard.yml`) is the merge gate: `scoreboard/verify.py` re-verifies
+every entry — **including entries whose bundle lives in an external run repo, which it
+fetches and re-runs against the canonical hidden references** — **binds each entry to its
+bundle** (the bundle's own `problem_id`/`task` must equal the entry's), **checks the
+reported metric matches the judge's own recompute** (an entry whose metric the judge
+cannot recompute FAILs, and so does any `resource_costs` claim that contradicts the
+judge's `checks.structure` — no rank overclaim, on the metric or the tie-breaks); it runs
+the suites and **fails any PR whose generated board is stale**
+(`node scoreboard/build.mjs --check`). Malformed entries FAIL individually with a message;
+they never crash the gate or block other entries. **Discovery is automated too:** a run
+repo opts in with the GitHub topic `quantum-harness-run` + a `scoreboard-entry.json` at
+its root; `scoreboard/discover.mjs` searches **all of GitHub** for the topic (a run repo
+under your personal account registers exactly like one in the org — subject to GitHub's
+search-index lag, usually minutes to hours after you add the topic), plus the org's own
+live repo list as a fast path and fallback, shape-validates each entry (invalid ones are
+skipped and logged), ingests them into `scoreboard/discovered.json`, re-verifies them, and
+rebuilds the board — **no PR needed** (the [PR template](.github/pull_request_template.md)
+still works if you prefer). Seeds live in `entries.json`, discovered runs in `discovered.json`;
+the aggregator merges both — **defensively**: a malformed community entry (say,
+`{"problem_id":"x"}` in a tagged repo's `scoreboard-entry.json`) is skipped and logged,
+never allowed to crash a board refresh or the `--remix` ingredients pack.
+
+The aggregator also derives two discovery structures the viewer renders below the board:
+
+- **The wanted board (`coverage`).** One record per **known** problem — every reference
+  in `bench/quantum-judge/references/` *and* the kernel-judge problem set, whether or not
+  anyone has run it — listing the paradigm families tried and whether a model-authored
+  run, a `classical-baseline` row, or a **real-device** hardware overlay exists. Every
+  empty cell renders as an open gap with the exact `bin/new-run.sh` command to claim it
+  (minted under *your own* GitHub login). Honesty rule: a gap is **untried** — the board
+  never claims a gap is impossible, and never that it's easy. A claimed cell lands only
+  through the same fail-closed re-verification gate as every other row.
+- **The frontier atlas (`frontier`).** Per problem, every verified run as a point in
+  (verified metric × primary resource cost) space with Pareto-dominance flags, the
+  stepped frontier through the non-dominated set, and a machine-derived open-gap
+  sentence (e.g. on `tfim3`: QAOA p=2 and the 1-layer hardware-efficient ansatz are a
+  genuine two-point tradeoff — nothing below 2 two-qubit gates, and gap ≈ 1e-4 only at
+  4). Dominated runs stay visible: the board is a record, not a highlight reel.
+
+**Refresh cadence, honestly:** a scheduled workflow (`.github/workflows/discover.yml`,
+every 6 hours) exists, but org CI is not guaranteed to be running; in practice the board
+refreshes when a maintainer runs `node scoreboard/discover.mjs && python3
+scoreboard/verify.py && node scoreboard/build.mjs` and deploys — expect **hours to a few
+days**, not instant. Your run repo (bundle + judge verdict) is the permanent record either
+way; discovery only decides when the row appears on the hosted board. The one manual step
+for a fully-live board is the Cloudflare deploy — automated if you add a
+`CLOUDFLARE_API_TOKEN` repo secret (the discover workflow deploys when it's present).
+
+What this means in practice, right now:
+- **The numbers are real and already re-verifiable** — re-run `judge_verify.py` on any
+  linked bundle and you reproduce the score offline.
+- **Ranking is by convention** — apply (b) by hand across a problem's registered entries.
+  When the aggregator ships, it will compute exactly this ordering from the committed
+  bundles; nothing about the data model changes.
+- **You can start contributing today** without waiting for the site. Do a run, commit the
+  bundle, open the PR. When the board goes live it ingests what's already here.
+
+That honesty is deliberate. We would rather ship a convention that's true than a
+dashboard that's decorative.
+
+---
+
+## Why a scoreboard exists (the warm part)
+
+Three reasons, plainly:
+
+1. **Contribute to science.** Every accepted entry adds to an open, reproducible,
+   re-verifiable corpus of verified quantum designs that anyone can check by re-running
+   the judge. Correctness is scored without human taste — so the corpus is trustworthy in
+   a way a leaderboard of self-reported numbers never is.
+2. **A scoreboard across paradigms.** This is what makes the corpus more than a pile of
+   solutions: the same hidden-graded problems let you compare design approaches head to
+   head — which ansatz, which topology, which feature map (and which classical baseline)
+   currently leads. The frontier is public, and it moves when someone posts a better
+   verified design.
+3. **For the curious.** Pick a problem, point a capable model at its BRIEF, watch it loop
+   to ACCEPT — then try to **beat the current best verified score**. The tie-breaks make
+   that a real game: match the fidelity with fewer two-qubit gates, route the workload on
+   a sparser map, generalize the classifier with a simpler feature map. Hill-climb on a
+   number a machine will check for you.
+
+You don't need a QPU, a cloud account, or our permission. You need numpy, a BRIEF, and a
+model willing to self-correct. **Do your own harness-preparation run, and put a row on the
+board.** The judge is waiting, and it grades the same for everyone.
+
+— the [QuantumMytheme](https://github.com/QuantumMytheme) org

@@ -1,0 +1,877 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Education · QuantumMytheme — from a bit and a qubit to the efficiency frontier</title>
+<meta name="description" content="A forty-slice curriculum in six parts: the two histories, two ladders (classical bit → logic → chips → ML → transformers → SSMs, and quantum qubit → entanglement → algorithms → error correction → real hardware), prove-then-run verification, thirteen re-runnable landmark experiments, and the North Star — an honest, source-backed map of where machine intelligence actually gets more efficient, and where quantum does and doesn't fit." />
+<link rel="canonical" href="https://quantummytheme.com/education" />
+<meta property="og:type" content="article" />
+<meta property="og:site_name" content="QuantumMytheme" />
+<meta property="og:url" content="https://quantummytheme.com/education" />
+<meta property="og:title" content="Education — from a bit and a qubit to the efficiency frontier" />
+<meta property="og:description" content="Forty slices in six parts: history, two ladders (classical + quantum), prove-then-run, thirteen re-runnable landmark experiments, and the North Star — where machine intelligence actually gets more efficient, honest about where quantum fits." />
+<meta property="og:image" content="https://quantummytheme.com/og.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://quantummytheme.com/og.png" />
+<link rel="stylesheet" href="style.css" />
+<style>
+  .takeaway { font-family: var(--sans); font-size: 14.5px; color: var(--ink-2); background: var(--panel); border-left: 3px solid var(--accent); padding: 9px 14px; border-radius: 0 4px 4px 0; margin-top: 14px; max-width: var(--measure); }
+  .takeaway b { color: var(--ink); }
+  section > .wrap > p { margin-top: 14px; }
+  .edu-fig { padding: 14px; margin-top: 20px; }
+  .controls { margin-bottom: 12px; }
+  .controls:empty { display: none; }
+  canvas.edu-stage { display: block; width: 100%; height: 340px; border-radius: 4px; background: var(--stage-bg); }
+  .contents { font-family: var(--mono); font-size: 12.5px; columns: 2; column-gap: 40px; max-width: 820px; margin-top: 24px; }
+  .contents a { display: block; padding: 4px 0; color: var(--faint); text-decoration: none; break-inside: avoid; }
+  .contents a:hover { color: var(--ink); }
+  .contents a b { color: var(--accent); font-weight: 400; margin-right: 8px; }
+  .contents .ph { display: block; break-inside: avoid; margin: 12px 0 2px; font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-2); }
+  .contents .ph:first-child { margin-top: 0; }
+  .partsep { border-top: 1px solid var(--rule); }
+  .partsep .wrap { padding-top: clamp(34px, 4vw, 56px); padding-bottom: 2px; }
+  .partsep .pl { font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); }
+  .partsep h3 { font-family: var(--serif); font-weight: 700; font-size: clamp(20px, 2.4vw, 26px); margin-top: 6px; color: var(--ink); letter-spacing: -0.01em; }
+  .partsep p { font-size: 14.5px; color: var(--faint); margin-top: 6px; max-width: var(--measure); }
+  .partsep + section { border-top: none; }
+  html[data-theme="dark"] .partsep h3 { font-family: var(--mono); font-weight: 600; }
+  .cta h2::before { content: none; }
+  .cta ol { margin: 16px 0 0 20px; max-width: var(--measure); }
+  .cta li { margin: 9px 0; color: var(--ink-2); }
+  .cta li b { color: var(--ink); }
+  @media (max-width: 860px) { .contents { columns: 1; } canvas.edu-stage { height: 300px; } }
+</style>
+<script>/* set theme before paint to avoid flash */(function(){try{var q=new URLSearchParams(location.search).get('theme');var t=q||localStorage.getItem('qh-theme');if(t==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();</script>
+</head>
+<body>
+
+<header class="hero">
+  <canvas id="ambient" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <div class="brandbar">
+      <div class="logo"><a href="index.html" style="text-decoration:none;color:inherit"><b>QuantumMytheme</b> · quantum-harness</a></div>
+      <div class="right">
+        <nav>
+          <a href="index.html#why">Why</a>
+          <a href="index.html#platform">Platform</a>
+          <a href="index.html#judge">Judge</a>
+          <a href="education.html" aria-current="page">Learn</a>
+          <a href="lab.html#studio">Studio</a>
+          <a href="index.html#scoreboard">Scoreboard</a>
+          <a href="index.html#run">Run yours</a>
+          <a href="lab.html">Notebook ↗</a>
+        </nav>
+        <button id="themeToggle" class="themebtn" aria-label="Switch colour theme">
+          <span class="dotmark" aria-hidden="true"></span><span id="themeLabel">Luminous mode</span>
+        </button>
+      </div>
+    </div>
+
+    <p class="preprint">Curriculum · from the smallest unit, up</p>
+    <h1>From a bit and a qubit to your <span class="ket">own quantum run.</span></h1>
+    <p class="subtitle">Two ladders, climbed one rung at a time. A classical one — switch, logic, chip, learning, language model. A quantum one — qubit, entanglement, algorithm, error correction, real hardware. Each rung is a small thing you can poke.</p>
+
+    <div class="abstract">
+      <span class="lbl">How to read this</span>
+      <p>Forty slices in six parts. <b>Part&nbsp;0</b> sets the two histories side by side. <b>Part&nbsp;I</b> climbs the classical stack from a single bit — logic gates, the chip — up through machine learning, transformers, state-space models, and the silicon that runs them. <b>Part&nbsp;II</b> climbs the quantum stack from a single qubit — entanglement, what the speedups actually are, why noise forces error correction, and the machines being built. <b>Part&nbsp;III</b> lets you experiment with qubit counts against the chips that exist today. <b>Part&nbsp;IV</b> re-runs thirteen landmark experiments — Bell's inequality, teleportation and its dual superdense coding, quantum error correction, GHZ's all-or-nothing refutation of local realism, the one-query algorithms (Deutsch–Jozsa, Bernstein–Vazirani, Simon), the classical counterparts (the Hamming code, the 3-SAT phase transition, Rule 110's universality, Landauer's energy limit) and the RSA→Shor bridge — each computing its headline result live. <b>Part&nbsp;V</b> is the North Star: an honest, source-backed map of where machine intelligence actually gets more efficient — and where quantum does and doesn't fit — through an explorer and six verify-it-yourself lessons (the three physical walls, the levers that ship, how to read a multiplier, why quantum is a simulation lever, the one honest metric, and refereeing efficiency on real silicon), before the page hands you the loop: prove a design in simulation with a classical model, then run it on real silicon. Every figure reads in both the paper and luminous themes; toggle any time.</p>
+    </div>
+
+    <nav class="contents" aria-label="Curriculum contents">
+      <span class="ph">Part 0 · how we got here</span>
+      <a href="#m-history"><b>00</b>Inventions &amp; moments</a>
+      <span class="ph">Part I · classical — bit → intelligence</span>
+      <a href="#m-bit"><b>01</b>What is a bit?</a>
+      <a href="#m-rules-to-learning"><b>02</b>From rules to learning</a>
+      <a href="#m-machine-learning"><b>03</b>Learning a boundary</a>
+      <a href="#m-big-data"><b>04</b>Scale changes everything</a>
+      <a href="#m-neural-nets"><b>05</b>Networks that learn features</a>
+      <a href="#m-transformers"><b>06</b>Attention</a>
+      <a href="#m-architectures"><b>07</b>Beyond attention: SSMs &amp; hybrids</a>
+      <a href="#m-slm-llm"><b>08</b>Small and large models</a>
+      <a href="#m-pretrain-posttrain"><b>09</b>Pretraining, then post-training</a>
+      <a href="#m-inference-zoo"><b>10</b>The modern inference zoo</a>
+      <a href="#m-classical-stack"><b>11</b>How silicon runs all this</a>
+      <span class="ph">Part II · quantum — qubit → hardware</span>
+      <a href="#m-qubit"><b>12</b>What is a qubit?</a>
+      <a href="#m-entanglement"><b>13</b>Two qubits, and the 2ⁿ explosion</a>
+      <a href="#m-quantum-algorithms"><b>14</b>What quantum is good for</a>
+      <a href="#m-noise-qec"><b>15</b>Noise, NISQ &amp; error correction</a>
+      <a href="#m-hardware-zoo"><b>16</b>The quantum hardware zoo</a>
+      <a href="#m-hybrid-quantum"><b>17</b>Hybrid classical–quantum</a>
+      <span class="ph">Part III · scale</span>
+      <a href="#m-qubit-explorer"><b>18</b>Theoretical vs real qubit counts</a>
+      <span class="ph">Part IV · landmark experiments — re-run the proof</span>
+      <a href="#m-chsh"><b>19</b>Bell's inequality: S beyond 2</a>
+      <a href="#m-teleport"><b>20</b>Teleporting a qubit</a>
+      <a href="#m-qec-code"><b>21</b>Catching an error without looking</a>
+      <a href="#m-ghz-mermin"><b>22</b>GHZ: local realism in one shot</a>
+      <a href="#m-bv"><b>23</b>One query for the whole secret</a>
+      <a href="#m-hamming"><b>24</b>The Hamming code (classical twin)</a>
+      <a href="#m-sat3"><b>25</b>The 3-SAT phase transition</a>
+      <a href="#m-rsa-shor"><b>26</b>RSA, and what Shor speeds up</a>
+      <a href="#m-superdense"><b>27</b>Two bits on a single qubit</a>
+      <a href="#m-deutsch-jozsa"><b>28</b>Constant or balanced, in one query</a>
+      <a href="#m-simon"><b>29</b>A hidden period, exponentially faster</a>
+      <a href="#m-rule110"><b>30</b>A universal computer from one rule</a>
+      <a href="#m-landauer"><b>31</b>The energy price of erasing a bit</a>
+      <span class="ph">Part V · the North Star</span>
+      <a href="#m-efficiency"><b>32</b>Where intelligence gets more efficient</a>
+      <a href="#m-walls"><b>33</b>The three walls</a>
+      <a href="#m-levers"><b>34</b>The levers that ship</a>
+      <a href="#m-claim-checker"><b>35</b>Read the multiplier</a>
+      <a href="#m-quantum-lever"><b>36</b>Quantum: a simulation lever</a>
+      <a href="#m-metric"><b>37</b>The one honest metric</a>
+      <a href="#m-roofline"><b>38</b>Refereeing efficiency on real silicon</a>
+      <a href="#m-your-run"><b>39</b>Your turn: prove, then run</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ===================== PART 0 ===================== -->
+<section id="m-history" data-rail="History">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">How we got here</p>
+      <h2>Inventions and turning points</h2>
+      <p class="takeaway"><b>Takeaway.</b> Two long arcs — one classical, one quantum — and you are about to climb both.</p>
+    </div>
+    <p>The machine in front of you is the sediment of a handful of ideas, each impractical until it wasn't. Boolean logic became algebra; Shannon named the bit; the transistor gave the bit a body; the integrated circuit packed millions of them onto a fingernail; and a single 2017 paper's attention mechanism became the backbone of today's language models. Quantum computing runs a second, younger arc that starts with Feynman's 1981 observation: simulating quantum physics on a classical computer seems to cost exponentially more than the physics itself — so perhaps a computer built from quantum parts would not. The two arcs are still converging. This page climbs both, from the smallest unit to a run you can launch yourself.</p>
+    <div class="panel edu-fig">
+      <div class="controls"></div>
+      <canvas class="edu-stage" data-edu="history" aria-label="A two-lane timeline of computing and quantum-computing milestones; hovering a node reveals its year and significance"></canvas>
+    </div>
+    <p class="figcap"><b>Fig 0.</b> Two lanes — classical above the line, quantum below. Hover any milestone for the detail; left idle, it walks through them in order.</p>
+  </div>
+</section>
+
+<!-- ===================== PART I divider ===================== -->
+<div class="partsep"><div class="wrap">
+  <p class="pl">Part I · Classical</p>
+  <h3>From a switch to intelligence</h3>
+  <p>Start at the smallest unit — one switch — and climb: logic, arithmetic, the chip, then the leap from coded rules to systems that learn, scale into neural networks and transformers, branch into state-space models, and finally the silicon that runs all of it.</p>
+</div></div>
+
+<!-- ============================= 1 ============================= -->
+<section id="m-bit">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Classical · the unit</p>
+      <h2>What is a bit?</h2>
+      <p class="takeaway"><b>Takeaway.</b> Everything a classical computer does is built from one thing — a switch that is on or off.</p>
+    </div>
+    <p>A bit is the smallest unit of information: a single yes/no, 0 or 1. Physically it is a switch, and in a modern chip that switch is a transistor — a gate that either blocks current or lets it through, with no moving parts. One switch is not much; the power comes from wiring them together. A few transistors make a logic gate (AND, OR, XOR); gates combine into an adder that does arithmetic; adders and memory cells become a processor; and billions of transistors on a chip become everything else. There is no other magic underneath — a computer is an enormous, fast arrangement of switches. Hold onto this picture, because a qubit will break it in a precise and useful way.</p>
+    <div class="panel edu-fig">
+      <div class="controls"></div>
+      <canvas class="edu-stage" data-edu="bit" aria-label="Two input bits feed a logic gate to an output lamp; a truth table highlights the current row, with a half-adder mode"></canvas>
+    </div>
+    <p class="figcap"><b>Fig 1.</b> Toggle inputs <em>A</em> and <em>B</em>, pick a gate, and watch the output and the highlighted truth-table row. Switch to <em>half-adder</em> mode to see two gates add two bits — XOR for the sum, AND for the carry.</p>
+  </div>
+</section>
+
+<!-- ============================= 2 ============================= -->
+<section id="m-rules-to-learning">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Rules → learning</p>
+      <h2>From rules to learning</h2>
+      <p class="takeaway"><b>Takeaway.</b> Don't write the rule — show labeled examples and let the system fit the rule for you.</p>
+    </div>
+    <p>For decades the way to make a machine "smart" was to write the rules by hand: IF the email contains "free money" AND the sender is unknown, THEN flag it as spam. These expert systems worked until the rules collided. Real problems have thousands of overlapping exceptions, and each patched rule tends to break others, so the rulebook grows faster than anyone can maintain it. Machine learning inverts the job: instead of writing the rule, you collect labeled examples — emails already marked spam or not — and a fitting procedure adjusts a decision boundary to make as few mistakes as it can on those examples, recovering a rule no person wrote. The boundary need not split the classes perfectly; it just has to make fewer errors than the hand-written rules did.</p>
+    <div class="panel edu-fig">
+      <div class="controls"></div>
+      <canvas class="edu-stage" data-edu="rules-to-learning" aria-label="A staircase of hand-written rules dissolves into data points and a learned boundary settles in"></canvas>
+    </div>
+    <p class="figcap"><b>Fig 2.</b> A hand-coded staircase rule (with the points it gets wrong) melts into the data; a learned boundary then settles and corrects them. Click to flip between the two.</p>
+  </div>
+</section>
+
+<!-- ============================= 3 ============================= -->
+<section id="m-machine-learning">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Supervised learning</p>
+      <h2>Learning a boundary</h2>
+      <p class="takeaway"><b>Takeaway.</b> A model that memorizes its training examples isn't learning the rule — only a held-out test reveals the difference.</p>
+    </div>
+    <p>Supervised learning fits a function to labeled examples — points tagged with the answer — and the goal is to predict labels for points it has never seen. To check that it actually learned the pattern and didn't just memorize the examples, you split the data: fit on a training set, then score on a held-out test set the model never touched. A smooth boundary that misses a few training points often generalizes better than a jagged one that fits nearly every example, because the jagged curve is partly memorizing noise — wiggles that fit the particular sample but not the underlying rule. This harness's anti-overfit gate works the same way: ground truth lives in a hidden held-out check, so a submission that fit only the visible target is rejected when it fails the part it could not see.</p>
+    <div class="panel edu-fig">
+      <div class="controls"></div>
+      <canvas class="edu-stage" data-edu="machine-learning" aria-label="A flexibility slider morphs a decision boundary from smooth to jagged while train and test accuracy update"></canvas>
+    </div>
+    <p class="figcap"><b>Fig 3.</b> Drag <em>flexibility</em>: training accuracy keeps climbing while test accuracy peaks and then falls once the boundary starts chasing noise. Toggle the held-out test points to watch them.</p>
+  </div>
+</section>
+
+<!-- ============================= 4 ============================= -->
+<section id="m-big-data">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Scale · data + compute</p>
+      <h2>Scale changes everything</h2>
+      <p class="takeaway"><b>Takeaway.</b> Past a certain scale of data and compute, models that learn their own features beat models built on hand-engineered ones.</p>
+    </div>
+    <p>For decades, the hard part of building a classifier was hand-engineering the features — a human deciding which edges, frequencies, or word counts the model should look at. As labeled datasets and processors grew by orders of magnitude, a different approach started winning: feed raw data to a large model and let gradient descent discover the useful features on its own. This is representation learning, and it scaled because more examples and more compute kept buying lower error on tasks where hand-tuned features had plateaued. On those tasks the features were no longer designed; they were learned.</p>
+    <div class="panel edu-fig">
+      <div class="controls"></div>
+      <canvas class="edu-stage" data-edu="big-data" aria-label="A sparse dataset grows dense, hand-tuned feature knobs fade as a learned-feature lattice forms, and an error curve falls"></canvas>
+    </div>
+    <p class="figcap"><b>Fig 4.</b> As data and compute grow, hand-tuned feature knobs fade and a learned-representation lattice lights up; the error curve falls and flattens. Hover to scrub the scale.</p>
+  </div>
+</section>
+
+<!-- ============================= 5 ============================= -->
+<section id="m-neural-nets">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Forward pass</p>
+      <h2>Networks that learn features</h2>
+      <p class="takeaway"><b>Takeaway.</b> Stacked layers of weighted sums, tuned by gradient descent, tend to learn a hierarchy of features from data.</p>
+    </div>
+    <p>A neural network is layers of simple units called neurons. Each neuron multiplies its inputs by learned numbers (weights), adds them up along with a learned offset, and passes the sum through a nonlinear function; one layer's outputs become the next layer's inputs, so each pass through the stack — a forward pass, which we draw flowing left to right — turns the input into an output. Training compares that output to the desired answer with a loss, then uses gradient descent: it computes which way each weight should move to lower the loss and nudges every weight a small step that way, over and over, to fit the data. Because each layer feeds the next, the weights tend to organize into a hierarchy — early layers respond to simple patterns and later layers combine those into more abstract features.</p>
+    <div class="panel edu-fig">
+      <div class="controls"></div>
+      <canvas class="edu-stage" data-edu="neural-nets" aria-label="A small multilayer network with activations lighting up left to right on a forward pass"></canvas>
+    </div>
+    <p class="figcap"><b>Fig 5.</b> A real forward pass: activations sweep left to right, edge weight and sign (color) shaping each neuron. Click to replay; train a step to watch the loss tick down.</p>
+  </div>
+</section>
+
+<!-- ============================= 6 ============================= -->
+<section id="m-transformers">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Self-attention</p>
+      <h2>Attention</h2>
+      <p class="takeaway"><b>Takeaway.</b> Attention replaces step-by-step reading with all-pairs comparison done in parallel — one-hop paths, big matmuls, easy scaling.</p>
+    </div>
+    <p>A transformer first cuts text into tokens (word-pieces) and maps each to an embedding — a vector of numbers that places it in a learned space where related meanings sit nearby. Self-attention then lets every token compare itself against every other: each token emits a query and a key, the match between one token's query and another's key becomes a weight, and each token rebuilds itself as a weighted blend of the others' value vectors. A recurrent network had to read left-to-right, threading information through one hidden state step by step, so distant words were many steps apart and the computation could not be parallelized along the sequence. Attention computes all pairwise comparisons at once as matrix multiplies, which both shortens the path between any two tokens to a single hop and maps cleanly onto GPU hardware — that is why it scaled.</p>
+    <div class="panel edu-fig">
+      <div class="controls"></div>
+      <canvas class="edu-stage" data-edu="transformers" aria-label="An attention grid over seven tokens; hovering a token fans out weighted bonds to the tokens it attends to"></canvas>
+    </div>
+    <p class="figcap"><b>Fig 6.</b> Hover a token to light its attention row and fan weighted bonds to what it attends to (illustrative weights, not a trained model). Toggle <em>parallel</em> vs <em>recurrent</em> to see one-hop attention against step-by-step reading.</p>
+  </div>
+</section>
+
+<!-- ============================= 7 ============================= -->
+<section id="m-architectures">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Architectures</p>
+      <h2>Beyond attention: SSMs and hybrids</h2>
+      <p class="takeaway"><b>Takeaway.</b> Attention is powerful but its cost grows with the square of the context; state-space models trade some flexibility for near-linear scaling, and the frontier increasingly mixes both.</p>
+    </div>
+    <p>The transformer's all-pairs attention is its strength and its bill: comparing every token to every other is O(n²) in the length of the context, so doubling the context roughly quadruples the work and the memory. Two ideas push back. A recurrent network reads one token at a time through a single hidden state — linear work, but inherently sequential and hard to train at length. State-space models (the S4 line, then Mamba) revive that recurrent idea with a twist: a <em>selective</em> state that can be computed as a parallel scan in near-linear time and run with constant memory per step at inference, which makes very long contexts cheap. Neither wins outright, so frontier systems increasingly hybridize — a few attention layers for precise recall, many state-space layers for cheap long-range mixing. A separate trick, mixture-of-experts, grows a model's parameter count while routing each token to only a few of its many expert sub-networks, buying capacity without paying full compute on every token. Architecture, in the end, is a choice about what to spend — the same lesson the silicon section makes concrete.</p>
+    <div class="panel edu-fig">
+      <div class="controls"></div>
+      <canvas class="edu-stage" data-edu="architectures" aria-label="A plot of compute cost versus sequence length comparing attention's quadratic curve to a linear state-space curve, with a lineage of architectures below"></canvas>
+    </div>
+    <p class="figcap"><b>Fig 7.</b> Drag <em>context</em> and watch attention's n² curve pull away from the linear-time curve. Pick an architecture along the ribbon — RNN, Transformer, SSM/Mamba, Hybrid, Mixture-of-Experts — to read its key idea and scaling.</p>
+  </div>
+</section>
+
+<!-- ============================= 8 ============================= -->
+<section id="m-slm-llm">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Scale &amp; tradeoffs</p>
+      <h2>Small and large models</h2>
+      <p class="takeaway"><b>Takeaway.</b> Bigger raises capability but also cost and latency; the best model is the smallest one that still does the job.</p>
+    </div>
+    <p>Adding parameters and training data to a model tends to raise what it can do, but the gains arrive unevenly and never for free. A large general model answers a wide range of questions because it has the capacity to store broad patterns; a small purposeful model trained for one job can match or beat it on that job while running on a phone. The cost is concrete: more parameters mean more computation and more memory traffic per token, so a larger model is usually slower to respond and more expensive to serve. Choosing a model is therefore a tradeoff, not a ranking — the right size is the smallest one that clears the bar for your task.</p>
+    <div class="panel edu-fig">
+      <div class="controls"></div>
+      <canvas class="edu-stage" data-edu="slm-llm" aria-label="A size slider raises capability with diminishing returns while cost and latency rise; a right-sized band marks the smallest model that clears the task bar"></canvas>
+    </div>
+    <p class="figcap"><b>Fig 8.</b> Drag model size: capability climbs with diminishing returns while cost and latency keep rising. The shaded band marks the smallest size that clears the task bar — the right-sized choice.</p>
+  </div>
+</section>
+
+<!-- ============================= 9 ============================= -->
+<section id="m-pretrain-posttrain">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Two stages</p>
+      <h2>Pretraining, then post-training</h2>
+      <p class="takeaway"><b>Takeaway.</b> Pretraining builds the capability; post-training decides how that capability behaves.</p>
+    </div>
+    <p>Pretraining runs one mechanical objective at enormous scale: predict the next token across a broad corpus of text. Doing that well forces the model to absorb grammar, facts, code, and reasoning patterns — a base model with wide competence but no fixed way of behaving. Post-training then reshapes that competence: supervised fine-tuning on curated instruction-and-response pairs teaches it to follow requests, and preference optimization (RLHF is one such method) tunes it toward responses that human raters judge more helpful and honest. The second stage adds relatively little new factual knowledge; it mostly steers the behavior of knowledge the first stage already built.</p>
+    <div class="panel edu-fig">
+      <div class="controls"></div>
+      <canvas class="edu-stage" data-edu="pretrain-posttrain" aria-label="A broad corpus funnels into a base model, then a refinement stage snaps the diffuse output into ordered lanes"></canvas>
+    </div>
+    <p class="figcap"><b>Fig 9.</b> A broad corpus funnels into a base model; past the divider, post-training snaps the diffuse output into ordered behavior. Hover the left half to hold the base model alone.</p>
+  </div>
+</section>
+
+<!-- ============================= 10 ============================= -->
+<section id="m-inference-zoo">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Inference zoo</p>
+      <h2>The modern inference zoo</h2>
+      <p class="takeaway"><b>Takeaway.</b> Inference is a landscape of trade-offs — where it runs, how broad it is, what it can reach — not a single box.</p>
+    </div>
+    <p>Inference — running a trained model to get answers — happens in many places at once, and the differences matter more than any single "best" model. A model can run in a data center or on your own device; it can be broadly general or narrowly purposeful; it can answer from its own weights alone or reach out to tools, search, and retrieval as an agent. Hybrids mix these: a capable cloud model hands simple work to a small local one, or an on-device model calls a larger one only when it must. Inference is a landscape of trade-offs — where it runs, how broad it is, what it can reach — not a single box.</p>
+    <div class="panel edu-fig">
+      <div class="controls"></div>
+      <canvas class="edu-stage" data-edu="inference-zoo" aria-label="A general-vs-purposeful by cloud-vs-on-device map of model archetypes with a central tools/agents node tying them together"></canvas>
+    </div>
+    <p class="figcap"><b>Fig 10.</b> Model archetypes placed on two axes — cloud vs on-device, general vs purposeful — with a central tools/retrieval/agents node. Hover any node for its trade-off; hover the center to see a hybrid span the grid.</p>
+  </div>
+</section>
+
+<!-- ============================= 11 ============================= -->
+<section id="m-classical-stack">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">The classical stack</p>
+      <h2>How silicon runs all this</h2>
+      <p class="takeaway"><b>Takeaway.</b> From source to chip, the machine boils down to one move done at enormous scale: multiply matrices.</p>
+    </div>
+    <p>Every model you run starts as source code — Python, over the C++ and CUDA underneath it. A compiler lowers that source into an intermediate representation (IR): at the top level, a hardware-neutral description of the computation as a graph of operations. That IR is then lowered, stage by stage, into instructions for a specific accelerator — a GPU or TPU — and the resulting program runs on the chip. (On NVIDIA GPUs this passes through PTX, a virtual instruction set, before becoming the chip's real machine code.) Once you reach the chip, the overwhelming majority of the arithmetic is one operation repeated: multiplying matrices of numbers. A GPU spreads those multiplies across thousands of small cores; a TPU feeds them through a systolic array — a fixed grid of multiply-add units that data flows across. This silicon — an op graph lowered onto matrix-multiplying hardware — is the substrate today's machine intelligence runs on. Quantum processors do not replace it: they run as coprocessors alongside this classical stack, which still handles the control, compilation, and most of the work.</p>
+    <div class="panel edu-fig">
+      <div class="controls"></div>
+      <canvas class="edu-stage" data-edu="classical-stack" aria-label="A work token flows through source, IR, ISA and accelerator stages while a systolic matmul grid pulses diagonally"></canvas>
+    </div>
+    <p class="figcap"><b>Fig 11.</b> Source → IR → ISA → accelerator, then the work dissolves into a systolic matmul array sweeping diagonally. Hover a stage to freeze and label it; hover the grid to light a row × column dot product.</p>
+  </div>
+</section>
+
+<!-- ===================== PART II divider ===================== -->
+<div class="partsep"><div class="wrap">
+  <p class="pl">Part II · Quantum</p>
+  <h3>The same ladder, built from qubits</h3>
+  <p>Now climb the second arc. Start at one qubit — superposition and measurement — then two and the 2ⁿ explosion of entanglement, what the speedups really are and aren't, why noise forces error correction, and the very different machines being built to run it all.</p>
+</div></div>
+
+<!-- ============================= 12 ============================= -->
+<section id="m-qubit">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Quantum · the unit</p>
+      <h2>What is a qubit?</h2>
+      <p class="takeaway"><b>Takeaway.</b> A qubit is not a bit that is "both 0 and 1" — it is a direction, set by amplitudes whose squared magnitudes are the odds you read 0 or 1.</p>
+    </div>
+    <p>A classical bit is a switch. A qubit is described instead by two complex numbers — amplitudes for |0⟩ and |1⟩ — that you can picture as an arrow on a sphere, the Bloch sphere. Before measurement the qubit is in a superposition: the arrow can point anywhere on the surface, not just at the poles. A gate is a rotation of that arrow, and this repo's <code>sim.py</code> applies each gate as a matrix multiply that never changes the arrow's length. Two things make qubits more than fuzzy bits. First, amplitudes carry a phase — an angle — and differences in phase let possibilities interfere, reinforcing some outcomes and cancelling others; an overall phase shared by every amplitude is invisible. Second, you never see the amplitudes: measuring collapses the qubit to 0 or 1 with probability equal to that amplitude's squared magnitude, and the rest is gone. Superposition is less "both at once" than "a definite direction you can only sample."</p>
+    <div class="panel edu-fig">
+      <div class="controls"></div>
+      <canvas class="edu-stage" data-edu="quantum-sim" aria-label="Phase-colored amplitude bars and a Bloch sphere update as you apply single-qubit gates"></canvas>
+    </div>
+    <p class="figcap"><b>Fig 12.</b> Apply gates (H, X, Z, S, T, Rx) to one qubit: the phase-colored amplitude bars and the Bloch arrow update, the arrow staying on the sphere's surface — length preserved. The probabilities below always sum to one.</p>
+  </div>
+</section>
+
+<!-- ============================= 13 ============================= -->
+<section id="m-entanglement">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Quantum · scale</p>
+      <h2>Two qubits, and the 2ⁿ explosion</h2>
+      <p class="takeaway"><b>Takeaway.</b> Each added qubit doubles the description — n qubits need 2ⁿ amplitudes — and entanglement is the part of that state no single qubit holds on its own.</p>
+    </div>
+    <p>One qubit took two amplitudes. Two qubits take four — one each for |00⟩, |01⟩, |10⟩, |11⟩ — and every qubit you add doubles the count, so n qubits are described by 2ⁿ complex numbers. That statevector is exactly what <code>sim.py</code> tracks, gate by gate, and it is the reason simulating a quantum computer gets expensive so fast. The doubling buys something a classical register cannot express: entanglement. Start two qubits in |00⟩, put the first into superposition with an H, and let it flip the second only when it is 1 — a CNOT — and you reach (|00⟩+|11⟩)/√2, a state where neither qubit has a definite value yet their values are perfectly correlated. Measure one and the other's outcome is instantly fixed, every time. The whole holds information the parts do not, and that surplus is where a quantum computer's advantage hides.</p>
+    <div class="panel edu-fig">
+      <div class="controls"></div>
+      <canvas class="edu-stage" data-edu="entanglement" aria-label="Four phase-colored amplitude bars for a two-qubit state, an entanglement readout, and a measurement that correlates the two qubits"></canvas>
+    </div>
+    <p class="figcap"><b>Fig 13.</b> Apply H₀, CNOT and the rest to a two-qubit state — or hit <em>Bell pair</em> — and watch the four amplitudes and the entanglement readout. <em>Measure</em> collapses the state; when it is entangled, the two qubits' outcomes always agree.</p>
+  </div>
+</section>
+
+<!-- ============================= 14 ============================= -->
+<section id="m-quantum-algorithms">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Quantum · algorithms</p>
+      <h2>What quantum computers are actually good for</h2>
+      <p class="takeaway"><b>Takeaway.</b> Quantum speedups come from interference — arranging amplitudes so wrong answers cancel and the right one grows — and they exist for some problems, not all.</p>
+    </div>
+    <p>A quantum computer is not a faster classical computer; it is a machine that computes with amplitudes, and its essential trick is interference. Grover's search makes this visible: start every candidate answer with equal amplitude, then repeat two steps — mark the right answer by flipping its sign, then reflect every amplitude about the average — and the marked answer's amplitude grows while the rest shrink, reaching near-certainty in about √N steps instead of the ~N a classical scan needs. That is a quadratic speedup, and it is provably the best any quantum search can do. Other algorithms reach further: Shor's factors large numbers far faster than any known classical method, which is why it threatens RSA; and the original motivation, Feynman's, is that simulating quantum chemistry and materials seems to cost a classical computer exponentially more than it costs nature. But many problems get no quantum speedup at all — it will not, for instance, simply make today's AI models run faster — and today's noisy machines mostly run heuristic variational loops with no proof of advantage. Being honest about which is which is the whole game.</p>
+    <div class="panel edu-fig">
+      <div class="controls"></div>
+      <canvas class="edu-stage" data-edu="quantum-algorithms" aria-label="Grover's algorithm shown as amplitude bars: an oracle flips the marked answer's sign and a diffusion step amplifies it over several iterations"></canvas>
+    </div>
+    <p class="figcap"><b>Fig 14.</b> Grover's amplitude amplification. <em>Step</em> applies the oracle then the reflection; the marked bar climbs toward certainty in ~√N steps. Click any bar to mark it, and keep stepping past the optimum to watch the amplitude overshoot and fall.</p>
+  </div>
+</section>
+
+<!-- ============================= 15 ============================= -->
+<section id="m-noise-qec">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Quantum · reliability</p>
+      <h2>Noise, NISQ, and error correction</h2>
+      <p class="takeaway"><b>Takeaway.</b> Real qubits are noisy; the fix is to spread one protected "logical" qubit across many physical ones — which only helps once the hardware is below an error threshold.</p>
+    </div>
+    <p>Today's qubits decohere — they lose their state in a tiny fraction of a second, and every gate adds a fraction of a percent of error. Machines at this stage are called NISQ: noisy, intermediate-scale, and too error-prone to run long algorithms directly. The way out is error correction: encode one logical qubit across many physical qubits so the most likely errors can be detected and undone without measuring — and destroying — the data itself. The leading scheme, the surface code, lays qubits on a grid of code distance d and uses roughly 2d²−1 physical qubits per logical qubit. It comes with a threshold: below about a 1% physical error rate, making the code larger drives the logical error rate down exponentially; above it, a larger code only makes things worse. Crossing below that threshold — shown convincingly for the first time in 2024 — is the hinge the whole field turns on, because past it reliability becomes a matter of spending more qubits. The cost is steep, which is exactly what the explorer ahead lets you feel.</p>
+    <div class="panel edu-fig">
+      <div class="controls"></div>
+      <canvas class="edu-stage" data-edu="noise-qec" aria-label="A surface-code grid of physical qubits forming one logical qubit, with sparse errors, beside a plot of logical error rate versus code distance"></canvas>
+    </div>
+    <p class="figcap"><b>Fig 15.</b> Left: a distance-d surface-code patch — one logical qubit built from ≈2d²−1 physical ones, with errors flickering at your chosen rate. Right: raise d and the logical error falls fast <em>below</em> the ~1% threshold, but rises if you push the physical error above it.</p>
+  </div>
+</section>
+
+<!-- ============================= 16 ============================= -->
+<section id="m-hardware-zoo">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Quantum · hardware</p>
+      <h2>The quantum hardware zoo</h2>
+      <p class="takeaway"><b>Takeaway.</b> There is no single kind of quantum computer — superconducting, trapped-ion, neutral-atom, and photonic machines trade qubit count, fidelity, speed, and temperature against one another.</p>
+    </div>
+    <p>Just as inference runs on many kinds of silicon, qubits are built in several physical ways, each with a different bargain. Superconducting circuits — IBM's and Google's path — switch fast and pack the most qubits onto a chip, but live near absolute zero and lose coherence quickly. Trapped ions — Quantinuum, IonQ — hold the highest gate fidelities and let any qubit talk to any other, at the cost of slower gates and fewer qubits. Neutral atoms held in tweezers of light — Atom Computing, QuEra — reach into the hundreds and thousands and can be rearranged between shots, with fidelities climbing fast. Photonic machines — PsiQuantum, Xanadu — encode qubits in light, promising room-temperature operation and natural networking but still early in maturity. None has won outright; the harness is deliberately hardware-agnostic, because a design proven in simulation should be runnable on whichever machine you can reach.</p>
+    <div class="panel edu-fig">
+      <div class="controls"></div>
+      <canvas class="edu-stage" data-edu="hardware-zoo" aria-label="A map of quantum hardware modalities placed by qubit count and gate fidelity, each with example machines and a trade-off note"></canvas>
+    </div>
+    <p class="figcap"><b>Fig 16.</b> The four leading modalities placed by qubit count and gate fidelity. Hover any node for its trade-off and example machines (as of 2026); left idle, it cycles through them.</p>
+  </div>
+</section>
+
+<!-- ============================= 17 ============================= -->
+<section id="m-hybrid-quantum">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Hybrid loop</p>
+      <h2>Hybrid classical–quantum</h2>
+      <p class="takeaway"><b>Takeaway.</b> A classical optimizer steers; the quantum device only measures energy — the loop repeats until the energy stops dropping.</p>
+    </div>
+    <p>Today's quantum devices are noisy and shallow, so the useful near-term algorithms keep most of the work classical and hand the device only one job: prepare a parameterized circuit and estimate the average energy of its state against a chosen Hamiltonian. A classical optimizer on an ordinary computer reads that energy, nudges the circuit's parameters, and asks the device to measure again — the variational loop behind VQE (ground-state energies) and QAOA (combinatorial optimization). The variational principle guarantees the true expectation value of the energy can never fall below the actual ground state, so the optimizer always has a floor to descend toward; shallow circuits accumulate less hardware error, keeping the estimate close to that true value, and the cost is averaged over many repeated measurements to beat down sampling noise. This repo's <code>isingbell2</code> task is exactly this loop made checkable: a classical optimizer drives a small circuit to the ground state of H = −X₀X₁ − Z₀Z₁, whose energy is −2.</p>
+    <div class="panel edu-fig">
+      <div class="controls"></div>
+      <canvas class="edu-stage" data-edu="hybrid-quantum" aria-label="A variational loop between a classical optimizer and a quantum circuit, with an energy trace descending toward the ground state"></canvas>
+    </div>
+    <p class="figcap"><b>Fig 17.</b> The variational loop: optimizer → parameters → circuit → energy → back. Run or step it and watch the energy descend toward the ground-state floor. Raise the step size to make it overshoot; add noise to see what averaging removes.</p>
+  </div>
+</section>
+
+<!-- ===================== PART III divider ===================== -->
+<div class="partsep"><div class="wrap">
+  <p class="pl">Part III · Scale &amp; your run</p>
+  <h3>From the chips that exist to a run you launch</h3>
+  <p>Put numbers on it. Feel how fast simulation costs explode, see where today's real chips sit against both the simulation wall and the error-correction tax — then close the loop the whole project is built around: prove a design in simulation with a classical model, then run it for real.</p>
+</div></div>
+
+<!-- ============================= 18 ============================= -->
+<section id="m-qubit-explorer">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Scale · experiment</p>
+      <h2>Theoretical limits vs the chips that exist</h2>
+      <p class="takeaway"><b>Takeaway.</b> Each qubit doubles the classical memory needed to simulate it, so today's chips are already impossible to simulate exactly — yet still far too small, once you pay the error-correction tax, to threaten hard problems.</p>
+    </div>
+    <p>Move the slider and watch two walls at once. To simulate n qubits exactly, a classical computer must store 2ⁿ amplitudes; at 16 bytes each that is 16&nbsp;MB at 20 qubits, 16&nbsp;GB at 30, and about 16&nbsp;petabytes at 50 — comparable to the entire memory of the largest supercomputers, which is why exact classical simulation stalls around fifty qubits, and only clever lossy tricks reach a little further. Real chips crossed that line years ago: the machines plotted here carry from dozens to over a thousand physical qubits, all comfortably beyond what we can simulate exactly. But the second panel shows the other wall. Once you pay the surface-code tax — very roughly a thousand physical qubits for one reliable logical qubit — today's hardware yields only a handful of protected qubits, while factoring RSA-2048 needs thousands of logical qubits, and so on the order of a million physical ones by recent estimates (and roughly twenty times that by estimates from only a few years ago). Today's machines sit in the gap: too big to simulate exactly, too small to error-correct into advantage. That gap is the whole reason this project exists.</p>
+    <div class="panel edu-fig">
+      <div class="controls"></div>
+      <canvas class="edu-stage" data-edu="qubit-explorer" aria-label="Two stacked panels sharing a qubit-count slider: top shows classical simulation memory hitting a wall near fifty qubits with real chips plotted beyond it; bottom shows error-corrected logical qubits versus milestones"></canvas>
+    </div>
+    <p class="figcap"><b>Fig 18.</b> One slider, two panels. <b>A</b>: the memory to simulate n qubits, with the classical-simulation wall and the real chips that sit past it. <b>B</b>: how many error-corrected logical qubits those physical qubits buy, against milestones from today's chips to breaking RSA-2048.</p>
+  </div>
+</section>
+
+<!-- ===================== PART IV divider ===================== -->
+<div class="partsep"><div class="wrap">
+  <p class="pl">Part IV · Landmark experiments</p>
+  <h3>Re-run the proofs yourself</h3>
+  <p>The whole idea here is a result a third party can re-check. So here are three landmark experiments reduced to a few qubits — each computes its headline number live from the statevector, the same number the original papers and real machines report. Run them, then go run your own.</p>
+</div></div>
+
+<!-- ============================= 19 ============================= -->
+<section id="m-chsh">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Landmark · Bell / CHSH</p>
+      <h2>Bell's inequality: S beyond 2</h2>
+      <p class="takeaway"><b>Takeaway.</b> One number — the CHSH correlation S — climbs past the classical limit of 2 to 2√2, which no theory of <em>local</em> hidden variables can produce.</p>
+    </div>
+    <p>In 1964 John Bell turned a philosophical worry — could quantum correlations secretly be explained by ordinary "local hidden variables" fixed in advance? — into a number you can measure. The CHSH form (Clauser, Horne, Shimony, Holt, 1969) combines four correlation measurements into a single quantity S. Any local-realistic theory, however clever, must obey |S| ≤ 2. A shared Bell state measured at the right angles reaches S = 2√2 ≈ 2.83 — Tsirelson's quantum maximum — and experiment agrees: Aspect's 1982 test closed the locality loophole, three independent loophole-free experiments settled it in 2015, and the 2022 Nobel Prize in Physics recognized the work. This figure computes S directly from the |Φ⁺⟩ statevector as you tune the measurement angle, so you watch it cross 2 yourself. One honest caveat: this rules out <em>local</em> hidden variables, not every hidden-variable theory — explicitly nonlocal ones, like Bohmian mechanics, survive.</p>
+    <div class="panel edu-fig">
+      <div class="controls"></div>
+      <canvas class="edu-stage" data-edu="chsh" aria-label="The four CHSH correlators and the value S, computed from a Bell state, plotted on a number line against the classical bound 2 and the quantum bound 2√2 as the measurement angle changes"></canvas>
+    </div>
+    <p class="figcap"><b>Fig 19.</b> Drag Bob's measurement angle; the four correlators and S update live, computed from |Φ⁺⟩. The shaded band is what local realism allows (|S| ≤ 2); the optimal 45° reaches 2√2 ≈ 2.828 — the most quantum mechanics permits.</p>
+  </div>
+</section>
+
+<!-- ============================= 20 ============================= -->
+<section id="m-teleport">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Landmark · Teleportation</p>
+      <h2>Teleporting a qubit</h2>
+      <p class="takeaway"><b>Takeaway.</b> With one shared entangled pair and two classical bits, an unknown quantum state is rebuilt elsewhere — exactly — and the original is destroyed.</p>
+    </div>
+    <p>Quantum teleportation (Bennett, Brassard, Crépeau, Jozsa, Peres, and Wootters, 1993) moves a quantum state without moving any particle. Alice holds an unknown qubit |ψ⟩ and one half of a Bell pair she shares with Bob. She entangles |ψ⟩ with her half, measures both — getting two random classical bits that reveal nothing about |ψ⟩ — and sends those two bits to Bob, who applies one of four simple Pauli corrections and recovers |ψ⟩ on his own qubit. Nothing outruns light: without the two classical bits, Bob's qubit is just noise, so the protocol can't beat the message there. And nothing is cloned: Alice's measurement destroys her copy, so only one |ψ⟩ ever exists — only the information moved, never any matter. First demonstrated in 1997; this figure runs the full three-qubit protocol and reports the fidelity — 1.000 — between Alice's message and Bob's result.</p>
+    <div class="panel edu-fig">
+      <div class="controls"></div>
+      <canvas class="edu-stage" data-edu="teleport" aria-label="Two Bloch spheres — Alice's message and Bob's qubit — with a shared-entanglement channel; running the protocol sends two classical bits to Bob, whose corrected qubit matches the message at fidelity one"></canvas>
+    </div>
+    <p class="figcap"><b>Fig 20.</b> Set the message direction and press Run. Alice's two measurement bits travel to Bob, who applies the matching correction; the two Bloch arrows line up and the fidelity reads 1.000 — every outcome, every time.</p>
+  </div>
+</section>
+
+<!-- ============================= 21 ============================= -->
+<section id="m-qec-code">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Landmark · Error correction</p>
+      <h2>Catching an error without looking</h2>
+      <p class="takeaway"><b>Takeaway.</b> Spread one qubit across three, and a parity check finds and undoes a bit-flip — without ever measuring (and destroying) the protected state.</p>
+    </div>
+    <p>The central puzzle of quantum error correction is that measuring a qubit destroys its superposition — so how can you ever check for an error? The three-qubit bit-flip code, the simplest one, answers it. Encode |ψ⟩ = α|0⟩ + β|1⟩ as α|000⟩ + β|111⟩, then measure two <em>parities</em> — whether neighbouring qubits agree — rather than the qubits themselves. Those two parity bits, the syndrome, point to exactly which qubit flipped without revealing α or β, so a single X correction restores the state. This is the move every error-corrected machine makes, and it is why the noise slice earlier mattered. It has a sharp limit: it catches bit-flips only and is completely blind to phase-flips — correcting an arbitrary single-qubit error needs a bigger code (Shor's nine-qubit code, or the five-qubit code). Flip a qubit and watch the syndrome localize it; switch to a phase error and watch it slip straight through.</p>
+    <div class="panel edu-fig">
+      <div class="controls"></div>
+      <canvas class="edu-stage" data-edu="qec-code" aria-label="Three encoded data qubits with the two stabilizers Z0Z1 and Z1Z2; injecting a bit-flip produces a syndrome that points to the flipped qubit, while a phase error leaves the syndrome at zero"></canvas>
+    </div>
+    <p class="figcap"><b>Fig 21.</b> Pick a qubit to flip; the two stabilizers Z₀Z₁ and Z₁Z₂ give a syndrome that points to it, and an X correction restores |ψ⟩. Switch to a Z (phase) error to watch the bit-flip code miss it entirely.</p>
+  </div>
+</section>
+
+<!-- ============================= 22 ============================= -->
+<section id="m-ghz-mermin">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Landmark · nonlocality</p>
+      <h2>Local realism, refuted in a single shot</h2>
+      <p class="takeaway"><b>Takeaway.</b> Three entangled qubits force a contradiction with any "local hidden variables" theory outright — no inequality, no statistics, just one measurement that can't be explained.</p>
+    </div>
+    <p>Bell's inequality (a few slices back) needed many runs and a statistical margin. Greenberger, Horne and Zeilinger found something sharper in 1989, made vivid by Mermin: a <em>logical</em> contradiction in a single measurement. Take the three-qubit state |GHZ⟩ = (|000⟩ + |111⟩)/√2. Quantum mechanics fixes four joint measurements with certainty: ⟨X₁X₂X₃⟩ = +1, while ⟨X₁Y₂Y₃⟩ = ⟨Y₁X₂Y₃⟩ = ⟨Y₁Y₂X₃⟩ = −1. Now suppose, as "local realism" demands, that each qubit already carried definite ±1 answers for X and Y before you looked. Multiply the four predictions together: every value appears exactly twice, so the product must be +1 — for <em>any</em> pre-set assignment. But quantum mechanics gives (+1)(−1)(−1)(−1) = −1. No local assignment can match all four at once; the contradiction is total, not statistical. (This rules out <em>local</em> hidden variables — nonlocal theories like Bohmian mechanics survive — and the four signs are stated here for the +|111⟩ convention.)</p>
+    <div class="panel edu-fig">
+      <div class="controls"></div>
+      <canvas class="edu-stage" data-edu="ghz-mermin" aria-label="A table of the four GHZ correlators comparing your pre-set local values against the quantum values computed from the statevector, with the product row showing the local +1 versus quantum −1 contradiction"></canvas>
+    </div>
+    <p class="figcap"><b>Fig 22.</b> Pre-assign definite ±1 values to each X and Y, as a local-realist must. The quantum column is computed from |GHZ⟩; the product of all four is forced to +1 by your values but −1 by quantum mechanics — at least one row can never match.</p>
+  </div>
+</section>
+
+<!-- ============================= 23 ============================= -->
+<section id="m-bv">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Landmark · query speedup</p>
+      <h2>One query for the whole secret</h2>
+      <p class="takeaway"><b>Takeaway.</b> To learn a hidden n-bit string a classical computer must ask n questions — one quantum query gets the whole thing, with certainty.</p>
+    </div>
+    <p>Here is a clean, exact quantum advantage — not a heuristic, not asymptotic. A black box hides an n-bit secret s and will tell you, for any input x, only the single parity bit s·x (mod 2). Classically that leaks one bit of s per question, so you need n questions — probe 100…0, then 010…0, and so on. Bernstein and Vazirani showed in 1993 that a quantum computer needs exactly <em>one</em>. Put all n qubits into superposition with Hadamards so the box sees every input at once; the box stamps each with the phase (−1)<sup>s·x</sup>; a second layer of Hadamards turns that phase pattern into the answer, and the register collapses to |s⟩ with certainty. The figure runs the real circuit — set any secret and watch a single query recover it exactly. (It's a refinement of Deutsch–Jozsa, and the separation here is a clean n queries down to 1.)</p>
+    <div class="panel edu-fig">
+      <div class="controls"></div>
+      <canvas class="edu-stage" data-edu="bv" aria-label="A Bernstein–Vazirani circuit — Hadamards, a phase oracle, Hadamards, measure — recovering the hidden string in one query, computed from the statevector"></canvas>
+    </div>
+    <p class="figcap"><b>Fig 23.</b> Toggle the hidden string, then read the recovered bits after a single oracle call — Hⁿ, the phase oracle, Hⁿ, measure → |s⟩ at probability 1, where a classical computer would need n separate queries.</p>
+  </div>
+</section>
+
+<!-- ============================= 24 ============================= -->
+<section id="m-hamming">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Landmark · classical error correction</p>
+      <h2>The Hamming code: the syndrome spells the error</h2>
+      <p class="takeaway"><b>Takeaway.</b> Three parity checks over seven bits localize any single-bit error — and read as a binary number, the checks give the error's position outright.</p>
+    </div>
+    <p>The same idea behind the quantum bit-flip code was invented for classical bits first. Frustrated by a relay computer that halted on every error, Richard Hamming published in 1950 a code that doesn't just detect errors but fixes them. It encodes four data bits into seven by adding three parity bits, placed at positions 1, 2 and 4; each parity bit checks a different overlapping set of positions. Flip any one of the seven bits and recompute the three checks: the three result bits, read together as a binary number, are exactly the <em>position</em> of the bit that flipped (and 000 means no error). One correction restores the word. It's the [7,4] code — single-error-correcting — and the mechanism is the classical ancestor of a quantum syndrome measurement: parity checks here, stabilizer measurements there. (The qubit code's literal twin is the three-bit repetition code; Hamming is the same idea made efficient.)</p>
+    <div class="panel edu-fig">
+      <div class="controls"></div>
+      <canvas class="edu-stage" data-edu="hamming" aria-label="Seven Hamming-code bit cells with three parity-check rows; clicking a bit flips it and the syndrome, read as a binary number, points to the flipped position"></canvas>
+    </div>
+    <p class="figcap"><b>Fig 24.</b> Set the four data bits, then click any bit to flip it. The three parity checks light up, and the syndrome read as a binary number (c₄c₂c₁) names the flipped position directly — the classical cousin of the qubit code's syndrome.</p>
+  </div>
+</section>
+
+<!-- ============================= 23 ============================= -->
+<section id="m-sat3">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Landmark · complexity</p>
+      <h2>The 3-SAT phase transition</h2>
+      <p class="takeaway"><b>Takeaway.</b> Pile logical constraints onto random variables and satisfiability collapses abruptly near a critical ratio — and the problems get hardest right at the edge.</p>
+    </div>
+    <p>Some problems are easy to <em>check</em> but seem to need brute search to <em>solve</em> — the P-vs-NP question. The Cook–Levin theorem (1971/73) made satisfiability (SAT) the first proven NP-complete problem; because the standard reduction yields three-literal clauses, 3-SAT is NP-complete too, and it sits at the heart of the hardest problems we know. Random 3-SAT shows that hardness as physics: take n boolean variables and m random three-literal clauses, and watch what happens as the ratio α = m/n grows. Below a critical ratio almost every formula is satisfiable; above it almost none are — and the crossover sharpens into a near-vertical cliff as n grows. For 3-SAT that threshold sits empirically around α ≈ 4.27 (a conjectured value from statistical-physics methods; a sharp threshold is proven to exist, with the exact value proven only for large clause sizes). The twist: the formulas that are hardest to solve cluster right at the edge — an "easy–hard–easy" pattern this figure measures by actually generating and solving thousands of random formulas.</p>
+    <div class="panel edu-fig">
+      <div class="controls"></div>
+      <canvas class="edu-stage" data-edu="sat3" aria-label="A plot of the probability a random 3-SAT formula is satisfiable versus the clause-to-variable ratio, dropping sharply near 4.27, with a solver-effort curve peaking at the same place"></canvas>
+    </div>
+    <p class="figcap"><b>Fig 25.</b> The curve is computed live — random 3-SAT formulas generated and brute-force solved. Drag the clause/variable ratio: P(satisfiable) falls off a cliff near 4.27, and the faint effort curve peaks there too. Press resample for a fresh batch.</p>
+  </div>
+</section>
+
+<!-- ============================= 24 ============================= -->
+<section id="m-rsa-shor">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Landmark · the bridge</p>
+      <h2>RSA, and the one step Shor speeds up</h2>
+      <p class="takeaway"><b>Takeaway.</b> RSA's security is the hardness of factoring; Shor's algorithm factors by finding a period — and that single step is the only part a quantum computer accelerates.</p>
+    </div>
+    <p>This is where the two ladders meet. RSA (Rivest, Shamir, Adleman, 1977) encrypts with a public number N = p·q and decrypts with a private key derived from p and q; anyone can multiply p and q, but recovering them by factoring N is, classically, the wall — for a 2048-bit N the best known method would run longer than the universe. Shor's algorithm (1994) walks straight through that wall, and the figure shows exactly how: pick a base a, look at the sequence a, a², a³, … mod N, and find its <em>period</em> r — the point where it returns to 1. If r is even and a<sup>r/2</sup> isn't −1, then the ordinary greatest-common-divisor of a<sup>r/2</sup>±1 with N hands you p and q. Every step here is classical arithmetic you can run by hand — except finding the period r, which is the one place a quantum computer (via the quantum Fourier transform) is exponentially faster. The gcd that turns the period into the factors is plain Euclid. Shor doesn't out-divide a classical computer; it out-finds the period.</p>
+    <div class="panel edu-fig">
+      <div class="controls"></div>
+      <canvas class="edu-stage" data-edu="rsa-shor" aria-label="An RSA panel showing encrypt and decrypt on small primes, beside a factoring panel that finds the period of a^x mod N and extracts the factors by gcd"></canvas>
+    </div>
+    <p class="figcap"><b>Fig 26.</b> Left: pick N = p·q, slide the message, watch encrypt and decrypt round-trip. Right: the sequence aˣ mod N, its period r, and the gcd that turns r into the factors — the period-finding is the only step a quantum computer speeds up.</p>
+  </div>
+</section>
+
+<!-- ============================= 27 ============================= -->
+<section id="m-superdense">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Landmark · superdense coding</p>
+      <h2>Two bits on a single qubit</h2>
+      <p class="takeaway"><b>Takeaway.</b> Sharing one entangled pair, Alice sends two classical bits by transmitting just one qubit — teleportation run in reverse.</p>
+    </div>
+    <p>Teleportation spent two classical bits and one shared entangled pair to move one qubit. Superdense coding (Bennett and Wiesner, 1992) is its exact mirror: it spends one shared entangled pair to send two classical bits down a single qubit. Alice and Bob start sharing a Bell pair. To send two bits, Alice applies one of four operations to her half — I, X, Z, or ZX — which rotates the shared state into one of the four mutually orthogonal Bell states, and ships her single qubit to Bob. Now holding both halves, Bob does one Bell measurement and reads the two bits straight off. The entanglement was the resource: without it, one qubit carries at most one bit. First demonstrated by Mattle, Weinfurter, Kwiat and Zeilinger in 1996.</p>
+    <div class="panel edu-fig">
+      <div class="controls"></div>
+      <canvas class="edu-stage" data-edu="superdense" aria-label="Alice encodes two bits onto her half of a Bell pair with one of four gates, sends one qubit, and Bob's Bell measurement recovers both bits"></canvas>
+    </div>
+    <p class="figcap"><b>Fig 27.</b> Toggle the two bits Alice wants to send; she applies the matching gate (I, X, Z, or ZX), transmits one qubit, and Bob's Bell measurement recovers both bits — every time.</p>
+  </div>
+</section>
+
+<!-- ============================= 28 ============================= -->
+<section id="m-deutsch-jozsa">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Landmark · query speedup</p>
+      <h2>Constant or balanced, in one query</h2>
+      <p class="takeaway"><b>Takeaway.</b> A function is promised to be either all-one-value or split-evenly; one quantum query settles which, where a classical computer might need exponentially many to be sure.</p>
+    </div>
+    <p>The Deutsch–Jozsa algorithm (1992), built on Deutsch's 1985 work, was the first to show a clean exponential gap between quantum and classical on a clearly-stated problem. A black box computes a function promised to be either <em>constant</em> (the same output on every input) or <em>balanced</em> (output 0 on exactly half the inputs, 1 on the rest). To be certain classically you might have to check just over half the inputs — up to 2ⁿ⁻¹+1 of them. The quantum circuit needs one: Hadamards put every input into superposition, the oracle stamps each with the phase (−1)<sup>f(x)</sup>, and a final layer of Hadamards makes the phases interfere — landing exactly on the all-zeros outcome if the function was constant, and away from it if balanced. (The exponential gap is against a classical computer that must be <em>certain</em>; a randomized classical algorithm guesses right with few queries. Bernstein–Vazirani is the sharper cousin.)</p>
+    <div class="panel edu-fig">
+      <div class="controls"></div>
+      <canvas class="edu-stage" data-edu="deutsch-jozsa" aria-label="Pick a constant or balanced oracle; after one query the measurement probability lands on the all-zeros outcome for constant and away from it for balanced"></canvas>
+    </div>
+    <p class="figcap"><b>Fig 28.</b> Choose a constant or balanced oracle; after a single query the measurement lands on |000⟩ (constant) or misses it entirely (balanced) — interference does the deciding.</p>
+  </div>
+</section>
+
+<!-- ============================= 29 ============================= -->
+<section id="m-simon">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Landmark · the road to Shor</p>
+      <h2>Finding a hidden period, exponentially faster</h2>
+      <p class="takeaway"><b>Takeaway.</b> A two-to-one function hides a secret period; each quantum query returns a clue, and a handful pin it down — where a classical computer needs exponentially many.</p>
+    </div>
+    <p>Simon's algorithm (1994) was the spark for Shor's. A black box computes a two-to-one function with a hidden period s: f(x) and f(x⊕s) always collide. Classically, finding s means hunting for such a collision, which takes about 2<sup>n/2</sup> queries — exponential. Simon's quantum routine runs Hadamards, the oracle, then Hadamards again, and each run returns a random bitstring y guaranteed to satisfy y·s = 0. Collect about n−1 independent equations of that form and ordinary linear algebra over the bits solves for s. It was the first problem with a <em>proven</em> exponential quantum speedup over <em>any</em> classical algorithm, even a randomized one — and Shor recognized that the same interference-then-period-finding structure could factor numbers and break RSA.</p>
+    <div class="panel edu-fig">
+      <div class="controls"></div>
+      <canvas class="edu-stage" data-edu="simon" aria-label="Each query returns a bitstring y satisfying y·s=0; once enough independent equations accumulate, the hidden period s is solved by linear algebra"></canvas>
+    </div>
+    <p class="figcap"><b>Fig 29.</b> Each "Run query" returns a y with y·s=0; once n−1 independent equations accumulate, s is solved — orders of magnitude fewer queries than the classical ~2<sup>n/2</sup>.</p>
+  </div>
+</section>
+
+<!-- ============================= 30 ============================= -->
+<section id="m-rule110">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Landmark · classical universality</p>
+      <h2>A universal computer from one tiny rule</h2>
+      <p class="takeaway"><b>Takeaway.</b> A line of cells, each following the same eight-line rule from its two neighbors, is enough to compute anything a computer can.</p>
+    </div>
+    <p>Computation needs no transistors and not even arithmetic — it can emerge from a rule almost too simple to believe. An elementary cellular automaton is a row of black-and-white cells; at each step every cell looks at itself and its two neighbors and updates by a fixed eight-entry lookup table. Rule 110 — named for the binary 01101110 of its eight outputs — produces neither order nor noise but a shifting traffic of "gliders" that collide and interact. Stephen Wolfram conjectured it was computationally universal; Matthew Cook proved it (published 2004), making Rule 110, with data encoded as gliders on its standard repeating background, one of the simplest known systems that can simulate any computer at all. Universality, it turns out, is cheap.</p>
+    <div class="panel edu-fig">
+      <div class="controls"></div>
+      <canvas class="edu-stage" data-edu="rule110" aria-label="The Rule 110 cellular automaton evolving downward from a seed, producing complex glider structures; other rules show order, chaos, or simple structure"></canvas>
+    </div>
+    <p class="figcap"><b>Fig 30.</b> Watch Rule 110 evolve from a single seed — the Class-4 gliders are the moving parts of a universal computer. Switch rules to see chaos (30), nested order (90), or simple structure (184) instead.</p>
+  </div>
+</section>
+
+<!-- ============================= 31 ============================= -->
+<section id="m-landauer">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Landmark · the cost of forgetting</p>
+      <h2>The energy price of erasing a bit</h2>
+      <p class="takeaway"><b>Takeaway.</b> Erasing one bit must dissipate at least kT·ln2 of heat — and that floor, plus moving data, not the switching itself, is the deep limit on efficient computing.</p>
+    </div>
+    <p>Information is physical, and forgetting it costs energy. Landauer's principle (1961) says erasing one bit — collapsing two possible states into one known state — must release at least kT·ln2 of heat, about 18 meV at room temperature. The crucial word is <em>erasing</em>: Charles Bennett showed in 1973 that logically reversible operations — a CNOT, a Toffoli, any one-to-one map that throws nothing away — carry no such floor and could in principle run at almost no energy cost. That is the deep reason quantum gates are unitary, hence reversible. Today's chips spend thousands of times the Landauer limit per operation, and most of that energy goes not into computing but into shuttling data across the chip. Which points straight at the real frontier of efficient machine intelligence: not faster switches, but architectures and hardware that forget less and move data less — the question the close of this page takes up.</p>
+    <div class="panel edu-fig">
+      <div class="controls"></div>
+      <canvas class="edu-stage" data-edu="landauer" aria-label="A bit-erasure diagram with the Landauer energy kT ln2 computed live at the chosen temperature, beside a reversible CNOT that loses no information"></canvas>
+    </div>
+    <p class="figcap"><b>Fig 31.</b> Drag the temperature to read the Landauer limit kT·ln2 live (≈18 meV at 300 K); toggle to a reversible CNOT, which loses no information and carries no fundamental energy cost.</p>
+  </div>
+</section>
+
+<!-- ===================== PART V divider ===================== -->
+<div class="partsep"><div class="wrap">
+  <p class="pl">Part V · The North Star</p>
+  <h3>Where intelligence gets more efficient</h3>
+  <p>Everything so far was groundwork for one question: how do we make machine intelligence useful and far more efficient than the classical computers running today's LLMs — and inspire the technologies that get us there? Here is the honest map, every claim measured against one yardstick anyone can re-check.</p>
+</div></div>
+
+<!-- ============================= 32 ============================= -->
+<section id="m-efficiency">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">North Star · the efficiency frontier</p>
+      <h2>Where intelligence gets more efficient</h2>
+      <p class="takeaway"><b>Takeaway.</b> Quantum will not make today's LLMs more efficient — but the frontier is real, and it is won by whoever can be honestly measured. This is the map.</p>
+    </div>
+    <p>The blunt, verified answer first: a quantum computer will not make today's language models faster, cheaper, or greener — the data-loading wall, dequantization, and barren plateaus all close that door, and anyone claiming otherwise is selling something. Quantum's genuine role is narrower and further off: simulating the strongly-correlated materials we would need to build better <em>classical</em> chips, a decade-plus away on fault-tolerant hardware. The near-term gains come from two places — <em>classical architectures</em> shipping today (quantization, sparse mixture-of-experts, speculative decoding, distillation, state-space hybrids) and <em>post-CMOS substrates</em> that are real but narrow (analog in-memory, neuromorphic, photonic, thermodynamic). And every one of them is bounded by the same physics: the memory wall, where moving a bit costs far more than the arithmetic, and the Landauer floor, kT·ln2 per erased bit, that even a chip's cheapest arithmetic sits roughly ten million times above. The explorer plots each lever by how mature it is and how much it actually saves — but the honest part is the small print: every point shows the baseline it was measured against, because almost every headline multiplier (25×, 100×, 1,000×, 10,000×) shrinks or collapses under like-for-like accounting. That is the whole point of this project. We are not here to promise that quantum saves us. We are here to map where intelligence — and everything else — actually gets more efficient, to hold every claim to a number a third party can re-check, and to inspire the technologies that move the frontier. Toggle <em>headline vs verified</em> to watch the inflated numbers fall to where the evidence puts them.</p>
+    <div class="panel edu-fig">
+      <div class="controls"></div>
+      <canvas class="edu-stage" data-edu="efficiency" aria-label="A scatter plot of efficiency levers by maturity and measured efficiency gain, each annotated with the baseline it was measured against and its source, with the physical floors and quantum shown as a separate distant track"></canvas>
+    </div>
+    <p class="figcap"><b>Fig 32.</b> Every efficiency lever, placed by maturity and its <em>measured</em> gain (× vs its own baseline). Hover any point for the as-measured number, the baseline it was measured against, and the source; filter by track; toggle <em>headline vs verified</em> to see the marketed multipliers fall. Quantum sits in a separate, distant track — materials simulation for better classical hardware, not an LLM accelerator. Sources incl. <a href="https://arxiv.org/abs/2411.02355">quantization</a>, <a href="https://www.nature.com/articles/s41586-023-06337-5">analog in-memory</a>, <a href="https://www.science.org/doi/10.1126/science.adh1174">NorthPole</a>, <a href="https://www.scottaaronson.com/papers/qml.pdf">QML “read the fine print”</a>, <a href="https://arxiv.org/abs/2312.08595">CMOS vs Landauer</a>.</p>
+  </div>
+</section>
+
+<!-- ============================= 33 ============================= -->
+<section id="m-walls">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">North Star · lesson 1</p>
+      <h2>The three walls</h2>
+      <p class="takeaway"><b>Takeaway.</b> Two gaps bound every chip — moving a bit costs far more than the math, and the math itself sits ~10⁷× above the thermodynamic floor — and the free ride that used to close them is over.</p>
+    </div>
+    <p>There are hard physical ceilings under all of this. The first is the <em>memory wall</em>: on a modern accelerator, moving data costs far more energy than the arithmetic that consumes it — an 8-bit multiply-accumulate is about 0.05 pJ, but fetching its operands from high-bandwidth memory runs ~2.5 pJ per bit, so the data movement, not the math, dominates the energy bill (roughly 50× per bit, more per operand). The second is the <em>Landauer floor</em>: erasing one bit must cost at least kT·ln2 ≈ 2.8×10⁻²¹ J, and even that ~0.05 pJ multiply-accumulate sits roughly ten million times above it. The third is <em>Koomey's law</em>: efficiency once doubled every ~1.6 years, but since Dennard scaling ended around 2005 it doubles only every ~2.6 years — the gap no longer closes for free; it has to be closed by design. Drag the slider and read the ratio yourself.</p>
+    <div class="panel edu-fig">
+      <div class="controls"></div>
+      <canvas class="edu-stage" data-edu="walls" aria-label="An energy breakdown showing data movement dwarfing compute, a log-energy ladder placing a logic op far above the Landauer floor, and the Koomey deceleration"></canvas>
+    </div>
+    <p class="figcap"><b>Fig 33.</b> Set the operand bytes and watch data movement dwarf the compute (≈50× per bit); the energy ladder shows a single INT8 MAC sitting ~10⁷× above the Landauer floor; the doubling time has slowed from ~1.6 to ~2.6 years.</p>
+  </div>
+</section>
+
+<!-- ============================= 34 ============================= -->
+<section id="m-levers">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">North Star · lesson 2</p>
+      <h2>The levers that ship</h2>
+      <p class="takeaway"><b>Takeaway.</b> Real efficiency comes from a handful of deployed levers — but they win on different axes and do not cleanly multiply, so the honest combined gain is a few ×, not the headline product.</p>
+    </div>
+    <p>The gains actually shipping come from classical architecture. Quantization stores and moves weights in fewer bits; sparse mixture-of-experts activates only a slice of the model per token; distillation trains a small model from a big one; and on the throughput side, speculative decoding and state-space hybrids cut latency and memory. The honest catch — and the reason this is a lesson, not a sales pitch — is that they live on different axes (memory traffic, active compute, parameters, throughput), so their gains overlap and you cannot just multiply the headline numbers. Only quantization, MoE and distillation lower the energy per token; speculative decoding and SSMs mostly cut latency, not joules. Stack them and watch the realistic combined number — a few × — sit far below the naïve product of every headline, which would claim something like 600×.</p>
+    <div class="panel edu-fig">
+      <div class="controls"></div>
+      <canvas class="edu-stage" data-edu="levers" aria-label="Toggleable efficiency levers on a 1.8 J/token baseline, with the realistic combined energy gain shown against the overstated naive product of headline numbers"></canvas>
+    </div>
+    <p class="figcap"><b>Fig 34.</b> Toggle the levers on a 1.8 J/token baseline; the realistic energy gain (quantization × MoE × distillation) lands a few ×, while the dashed "naïve product of headlines" shows the ~600× fantasy. Throughput levers are flagged as latency, not energy.</p>
+  </div>
+</section>
+
+<!-- ============================= 35 ============================= -->
+<section id="m-claim-checker">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">North Star · lesson 3</p>
+      <h2>Read the multiplier</h2>
+      <p class="takeaway"><b>Takeaway.</b> A headline multiplier means nothing until you name what it was measured against — the same claim can survive, shrink, or collapse depending on the baseline.</p>
+    </div>
+    <p>This is the referee tool — the platform's whole stance in one widget. A "100×" or "10,000×" is meaningless until you ask what it was measured against. Run a claim through five gates: was it benchmarked against a current datacenter baseline, not old or edge silicon? Full-system, power and cooling included? At fixed precision on a real workload at scale? Independently measured, not a datasheet or an extrapolation? And for quantum, does it count the cost of getting data in and out? Some claims survive — IBM's NorthPole really does deliver 25× more frames per joule than a comparable 12 nm GPU, peer-reviewed. Others shrink — the neuromorphic "100×" is measured against a small edge board and a laptop CPU, not a datacenter GPU — or collapse, like a thermodynamic "10,000×" that is a per-operation extrapolation from a test chip. The point isn't that every big number is a lie; it's that you cannot know until you check.</p>
+    <div class="panel edu-fig">
+      <div class="controls"></div>
+      <canvas class="edu-stage" data-edu="claim-checker" aria-label="A claim-checker that runs each vendor efficiency claim through five normalization gates and reports whether it survives, shrinks, or collapses, with the honest residual"></canvas>
+    </div>
+    <p class="figcap"><b>Fig 35.</b> Pick a claim and watch it walk the five-gate gauntlet — NorthPole's 25× survives, the "100×" shrinks, the "10,000×" collapses — with the honest number, and the real baseline, underneath.</p>
+  </div>
+</section>
+
+<!-- ============================= 36 ============================= -->
+<section id="m-quantum-lever">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">North Star · lesson 4</p>
+      <h2>Quantum: a simulation lever, not an LLM lever</h2>
+      <p class="takeaway"><b>Takeaway.</b> Quantum cannot speed up today's LLMs — getting classical data in and out erases the advantage — but it genuinely tackles problems, like simulating materials, that are classically intractable.</p>
+    </div>
+    <p>It's worth being precise about quantum, because the temptation runs both ways. It will not make your language model faster: to use a quantum speedup you must load the classical data in (a cost that grows with the data size) and read a useful answer back out (an amplitude-encoded answer collapses when measured, so extracting it takes repeated sampling — in the worst case comparable to reading the data in), and for the dense, high-dimensional work inside a transformer those two steps eat the advantage whole — on top of the dequantization results that matched the headline "quantum machine learning" speedups classically, and the barren plateaus that make the circuits untrainable at scale. But quantum is not useless. It is a <em>simulation</em> lever: the energy levels of strongly-correlated molecules and materials live in a state space that doubles with every electron — FeMoco, the nitrogen-fixation catalyst, needs on the order of 10²⁹ configurations — which is exactly what a quantum computer is built for. On a fault-tolerant machine a decade or two out, that could design the superconductors and memristors that make the next classical chips more efficient. Quantum's real contribution to machine intelligence is indirect — and it is real.</p>
+    <div class="panel edu-fig">
+      <div class="controls"></div>
+      <canvas class="edu-stage" data-edu="quantum-lever" aria-label="Left: a problem-size slider showing data-movement overhead erasing the claimed quantum ML speedup. Right: the 2^n classical cost of simulating electrons exploding, the genuine quantum-simulation target"></canvas>
+    </div>
+    <p class="figcap"><b>Fig 36.</b> Left — slide the problem size and watch the data-movement overhead erase the claimed quantum speedup for ML. Right — the classical cost of simulating n electrons (2ⁿ) explodes: the genuine, distant quantum-simulation target.</p>
+  </div>
+</section>
+
+<!-- ============================= 37 ============================= -->
+<section id="m-metric">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">North Star · lesson 5</p>
+      <h2>The one honest metric</h2>
+      <p class="takeaway"><b>Takeaway.</b> Every efficiency claim reduces to one checkable number — energy per token at fixed quality, full-system — read against the brain and the Landauer floor.</p>
+    </div>
+    <p>It all comes back to a single yardstick anyone can re-check: joules per token, at fixed task quality, measured across the whole system including power and cooling — not a multiplier, not a peak TOPS/W, an actual end-to-end energy per unit of useful work. Place a system on the scale and two things become legible at once: how it compares to the human brain, which produces a word for around 4.5 joules, and how much headroom remains to the Landauer floor — today's language models, at roughly 1.8 J/token, sit about twenty-one orders of magnitude above the thermodynamic minimum. That gap is not a forecast of doom; it is the size of the prize. This is the number this project holds every claim to, and it is the honest answer to the North Star: machine intelligence gets more efficient not when someone promises a miracle, but when a system moves measurably down this scale — and a third party can confirm it.</p>
+    <div class="panel edu-fig">
+      <div class="controls"></div>
+      <canvas class="edu-stage" data-edu="metric" aria-label="A log energy-per-token scale with the human brain and today's LLM marked, a draggable system marker, and a readout of its distance to the brain and its orders of magnitude above the Landauer floor"></canvas>
+    </div>
+    <p class="figcap"><b>Fig 37.</b> Drag a system's energy per token and read its distance to the brain (~4.5 J/word) and its ~21 orders of headroom above the Landauer floor. Unit caveat: J/word ↔ J/token via ~0.75 word/token; full-system energy, fixed quality.</p>
+  </div>
+</section>
+
+<!-- ============================= 38 ============================= -->
+<section id="m-roofline">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">North Star · lesson 6</p>
+      <h2>Refereeing efficiency on real silicon</h2>
+      <p class="takeaway"><b>Takeaway.</b> The four gates make <em>correctness</em> re-checkable; the roofline makes <em>efficiency</em> re-checkable. A speed claim is only as good as the byte and FLOP counts a stranger can recompute — and on a TPU those are hardware-anchored, not asserted.</p>
+    </div>
+    <p>The last lesson reduced every efficiency claim to one number — joules per token, full-system — but a number is only honest if it is <em>measured</em>, not asserted. A TPU is the cleanest place to measure it: nearly all of its math flows through a single 128×128 systolic array over one memory channel, so the roofline is unusually sharp, and “compute-bound or memory-bound?”, “what fraction of peak did you reach?”, and “how many bytes did you move per token?” all have first-principles answers a third party can recompute from the compiler's own accounting rather than take on faith. Pallas supplies the missing half: the same kernel source that runs on the array can be replayed in a deterministic emulator sharing its exact tiling, so correctness becomes a compiler-tied artifact — a notary — and a speed number is void unless the kernel is still right. Drag the operating point below: left of the ridge a kernel is starved for data and the array idles; keeping the working set resident or dropping precision changes <em>which</em> bandwidth binds you, but only reuse crosses the knee. This is how the same discipline that referees a quantum circuit's correctness extends to the classical-silicon efficiency that Part V says actually decides whether machine intelligence gets cheaper.</p>
+    <div class="panel edu-fig">
+      <div class="controls"></div>
+      <canvas class="edu-stage" data-edu="roofline" aria-label="A log-log TPU roofline: a memory-bound ramp rising to a compute-bound ceiling at the roughly 240 ops-per-byte ridge, with a draggable operating point that reads compute-bound or memory-bound and its percent of peak, and toggles for keeping weights resident in VMEM and for int8 precision"></canvas>
+    </div>
+    <p class="figcap"><b>Fig 38.</b> Drag the arithmetic intensity; the operating point rides the roofline. Left of the ridge (~240 ops/byte on TPU v5e) a kernel is memory-bound and the systolic array idles; right of it, compute-bound at full peak. Toggle <em>weights in VMEM</em> to see residency drop the ridge (~22× the bandwidth → ridge ≈ 11 ops/byte); toggle <em>int8</em> to raise the ceiling ~2×. Figures are generation-specific — the honest first act on real silicon is to re-measure them.</p>
+  </div>
+</section>
+
+<!-- ============================= 39 ============================= -->
+<section id="m-your-run">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Your turn</p>
+      <h2>Your turn: prove, then run</h2>
+      <p class="takeaway"><b>Takeaway.</b> Prove a design in simulation with a classical model, let a judge anyone can re-run check it, then take the verified design to real silicon.</p>
+    </div>
+    <p>Here is the whole loop, end to end. Fork the template, point a capable classical model at a brief, and let it design a circuit — today that model is Opus 4.8 or Fable 5, and the harness is built to also accept the next-generation model you may hear called Mythos the day it ships. A hermetic judge then re-simulates that circuit from scratch with numpy alone — no network, nothing it cannot recompute — and runs four gates in order: STRUCTURE, REPRODUCIBILITY, PERFORMANCE, ANTI-OVERFIT, stopping at the first that fails. Pass all four and the run auto-registers as a new row on the public board, where anyone can re-run the same judge and get the same verdict. Then comes the bridge the explorer set up: because the design is small and proven, you can take it to a real quantum chip, run it, and attach a hardware report whose headline number is recomputed from the raw measurement counts — so the simulation keeps the canonical score while the hardware run is an honestly-labeled overlay. Theoretical proof first, with the world's best classical models; real silicon second. It is cheap, open, and reproducible by construction.</p>
+    <div class="panel edu-fig">
+      <div class="controls"></div>
+      <canvas class="edu-stage" data-edu="your-run" aria-label="A run flows through the four judge gates, each latching green, then a new verified row slides onto the scoreboard"></canvas>
+    </div>
+    <p class="figcap"><b>Fig 39.</b> A forked run flows through the four gates — each latching green as it passes — and a new verified row slides onto the board. Hover to park the run between gates.</p>
+  </div>
+</section>
+
+<!-- ============================= CTA ============================= -->
+<section class="cta" id="close-the-loop">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Run your own</p>
+      <h2>Close the loop yourself</h2>
+    </div>
+    <p>The same flow the last figure animates — prove in simulation, then run for real, all open:</p>
+    <ol>
+      <li><b>Fork the template.</b> Use the GitHub “Use this template” button, or run <code>bin/new-run.sh</code> to scaffold a fresh run.</li>
+      <li><b>Run the KICKOFF prompt with your model.</b> Point a capable classical model — Opus 4.8, Fable 5, or the next-generation Mythos — at the brief and let it design a circuit.</li>
+      <li><b>The four-gate judge grades it.</b> A hermetic judge re-simulates the circuit from scratch with numpy alone — no network — running STRUCTURE, REPRODUCIBILITY, PERFORMANCE, and ANTI-OVERFIT in order, stopping at the first failure.</li>
+      <li><b>Register on the scoreboard.</b> Pass all four and your run auto-registers as a new row anyone can re-verify.</li>
+      <li><b>Run it on real hardware (optional).</b> Take the verified design to a QPU and attach a hardware report whose metric is recomputed from the raw counts — the sim keeps the score, the chip run is a labeled overlay. See <a href="https://github.com/QuantumMytheme/quantum-harness/blob/main/HARDWARE.md">HARDWARE.md</a>.</li>
+    </ol>
+    <p style="margin-top:18px"><a href="index.html#run">See the run flow on the overview →</a> &nbsp;·&nbsp; <a href="https://github.com/QuantumMytheme/quantum-harness">The template repo →</a></p>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="wrap">
+    <span class="mono">QuantumMytheme · quantum-harness</span>
+    <span class="mono">verifiable quantum design · numpy-only · no QPU required</span>
+  </div>
+</footer>
+
+<script src="education.js"></script>
+<script src="railnav.js"></script>
+</body>
+</html>
