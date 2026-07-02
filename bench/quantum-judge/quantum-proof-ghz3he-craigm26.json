@@ -1,0 +1,186 @@
+{
+ "schema": "quantum-harness/proof-bundle@1",
+ "task": "state_prep",
+ "problem_id": "ghz3_he",
+ "_comment": "Independent Euler-angle transpilation of GHZ-3 prep (H;CX;CX) into native {rz,rx,cz}: H = Rz(pi/2) Rx(pi/2) Rz(pi/2) (up to global phase -i, numerically verified against the exact H matrix); CX(c,t) = H(t) . CZ(c,t) . H(t). 3 native rotations per H, 7 native ops per CX, 17 ops total, 2 CZ gates, depth 11 (budget 12).",
+ "circuit": {
+  "n_qubits": 3,
+  "ops": [
+   {
+    "gate": "rz",
+    "q": [
+     0
+    ],
+    "params": [
+     1.5707963267948966
+    ]
+   },
+   {
+    "gate": "rx",
+    "q": [
+     0
+    ],
+    "params": [
+     1.5707963267948966
+    ]
+   },
+   {
+    "gate": "rz",
+    "q": [
+     0
+    ],
+    "params": [
+     1.5707963267948966
+    ]
+   },
+   {
+    "gate": "rz",
+    "q": [
+     1
+    ],
+    "params": [
+     1.5707963267948966
+    ]
+   },
+   {
+    "gate": "rx",
+    "q": [
+     1
+    ],
+    "params": [
+     1.5707963267948966
+    ]
+   },
+   {
+    "gate": "rz",
+    "q": [
+     1
+    ],
+    "params": [
+     1.5707963267948966
+    ]
+   },
+   {
+    "gate": "cz",
+    "q": [
+     0,
+     1
+    ]
+   },
+   {
+    "gate": "rz",
+    "q": [
+     1
+    ],
+    "params": [
+     1.5707963267948966
+    ]
+   },
+   {
+    "gate": "rx",
+    "q": [
+     1
+    ],
+    "params": [
+     1.5707963267948966
+    ]
+   },
+   {
+    "gate": "rz",
+    "q": [
+     1
+    ],
+    "params": [
+     1.5707963267948966
+    ]
+   },
+   {
+    "gate": "rz",
+    "q": [
+     2
+    ],
+    "params": [
+     1.5707963267948966
+    ]
+   },
+   {
+    "gate": "rx",
+    "q": [
+     2
+    ],
+    "params": [
+     1.5707963267948966
+    ]
+   },
+   {
+    "gate": "rz",
+    "q": [
+     2
+    ],
+    "params": [
+     1.5707963267948966
+    ]
+   },
+   {
+    "gate": "cz",
+    "q": [
+     1,
+     2
+    ]
+   },
+   {
+    "gate": "rz",
+    "q": [
+     2
+    ],
+    "params": [
+     1.5707963267948966
+    ]
+   },
+   {
+    "gate": "rx",
+    "q": [
+     2
+    ],
+    "params": [
+     1.5707963267948966
+    ]
+   },
+   {
+    "gate": "rz",
+    "q": [
+     2
+    ],
+    "params": [
+     1.5707963267948966
+    ]
+   }
+  ]
+ },
+ "constraints": {
+  "n_qubits": 3,
+  "native_gates": [
+   "rz",
+   "rx",
+   "cz"
+  ],
+  "coupling_map": [
+   [
+    0,
+    1
+   ],
+   [
+    1,
+    2
+   ]
+  ],
+  "max_depth": 12,
+  "max_two_qubit_gates": 2
+ },
+ "claim": {
+  "fidelity": 0.9999999999999998
+ },
+ "classical_baseline": {
+  "fidelity": 0.5
+ }
+}

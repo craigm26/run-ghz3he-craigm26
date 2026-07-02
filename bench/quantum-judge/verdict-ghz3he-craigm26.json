@@ -1,0 +1,1 @@
+{"verdict": "ACCEPT", "code": 0, "problem_id": "ghz3_he", "task": "state_prep", "checks": {"structure": {"depth": 11, "two_qubit_gates": 2, "n_qubits": 3}, "reproduced": {"fidelity": 1.0}, "performance": {"threshold": 0.99, "baseline": 0.5, "achieved": 1.0, "two_qubit_cost": 0.05, "cost_adjusted_fidelity": 0.9}}}

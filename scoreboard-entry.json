@@ -1,0 +1,13 @@
+{
+  "problem_id": "ghz3_he",
+  "task": "state_prep",
+  "paradigm": "euler-cz-sandwich",
+  "family": "hardware-efficient",
+  "model": "sonnet-5",
+  "verified_metric": { "name": "fidelity", "value": 1.0 },
+  "resource_costs": { "depth": 11, "two_qubit_gates": 2, "n_qubits": 3 },
+  "run_repo": "https://github.com/craigm26/run-ghz3he-craigm26",
+  "proof_bundle": "bench/quantum-judge/quantum-proof-ghz3he-craigm26.json",
+  "judge_exit": 0,
+  "verified_at": "2026-07-01"
+}
